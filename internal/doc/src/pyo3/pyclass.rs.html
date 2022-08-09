@@ -1,9 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/pyclass.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>pyclass.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../ayu.css" disabled><link rel="stylesheet" type="text/css" href="../../dark.css" disabled><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../storage.js"></script><script src="../../crates.js"></script><script defer src="../../main.js"></script><script defer src="../../source-script.js"></script><script defer src="../../scrape-examples.js"></script><script defer src="../../source-files.js"></script>
-    <noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="sidebar-logo" href="../../pyo3/index.html"><div class="logo-container"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></div>
-        </a><h2 class="location"></h2>
-    </nav>
-    <nav class="sidebar"><a class="sidebar-logo" href="../../pyo3/index.html"><div class="logo-container"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></div>
-        </a></nav><main><div class="width-limiter"><div class="sub-container"><a class="sub-logo-container" href="../../pyo3/index.html"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></a><nav class="sub"><div class="theme-picker hidden"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu" title="themes"><img width="22" height="22" alt="Pick another theme!" src="../../brush.svg"></button><div id="theme-choices" role="menu"></div></div><form class="search-form"><div class="search-container"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><button type="button" id="help-button" title="help">?</button><a id="settings-menu" href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../wheel.svg"></a></div></form></nav></div><section id="main-content" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/pyclass.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>pyclass.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../ayu.css" disabled><link rel="stylesheet" type="text/css" href="../../dark.css" disabled><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../storage.js"></script><script defer src="../../source-script.js"></script><script defer src="../../source-files.js"></script><script defer src="../../main.js"></script><script defer src="../../scrape-examples.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="sidebar-logo" href="../../pyo3/index.html"><div class="logo-container"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></div></a><h2 class="location"></h2></nav><nav class="sidebar"><a class="sidebar-logo" href="../../pyo3/index.html"><div class="logo-container"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></div></a></nav><main><div class="width-limiter"><div class="sub-container"><a class="sub-logo-container" href="../../pyo3/index.html"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></a><nav class="sub"><form class="search-form"><div class="search-container"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><button type="button">?</button></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../wheel.svg"></a></div></div></form></nav></div><section id="main-content" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">1</span>
 <span id="2">2</span>
 <span id="3">3</span>
 <span id="4">4</span>
@@ -584,40 +579,102 @@
 <span id="579">579</span>
 <span id="580">580</span>
 <span id="581">581</span>
+<span id="582">582</span>
+<span id="583">583</span>
+<span id="584">584</span>
+<span id="585">585</span>
+<span id="586">586</span>
+<span id="587">587</span>
+<span id="588">588</span>
+<span id="589">589</span>
+<span id="590">590</span>
+<span id="591">591</span>
+<span id="592">592</span>
+<span id="593">593</span>
+<span id="594">594</span>
+<span id="595">595</span>
+<span id="596">596</span>
+<span id="597">597</span>
+<span id="598">598</span>
+<span id="599">599</span>
+<span id="600">600</span>
+<span id="601">601</span>
+<span id="602">602</span>
+<span id="603">603</span>
+<span id="604">604</span>
+<span id="605">605</span>
+<span id="606">606</span>
+<span id="607">607</span>
+<span id="608">608</span>
+<span id="609">609</span>
+<span id="610">610</span>
+<span id="611">611</span>
+<span id="612">612</span>
+<span id="613">613</span>
+<span id="614">614</span>
+<span id="615">615</span>
+<span id="616">616</span>
+<span id="617">617</span>
+<span id="618">618</span>
+<span id="619">619</span>
+<span id="620">620</span>
+<span id="621">621</span>
+<span id="622">622</span>
+<span id="623">623</span>
+<span id="624">624</span>
+<span id="625">625</span>
+<span id="626">626</span>
+<span id="627">627</span>
+<span id="628">628</span>
+<span id="629">629</span>
+<span id="630">630</span>
+<span id="631">631</span>
+<span id="632">632</span>
+<span id="633">633</span>
+<span id="634">634</span>
+<span id="635">635</span>
+<span id="636">636</span>
+<span id="637">637</span>
+<span id="638">638</span>
+<span id="639">639</span>
+<span id="640">640</span>
+<span id="641">641</span>
+<span id="642">642</span>
+<span id="643">643</span>
+<span id="644">644</span>
+<span id="645">645</span>
+<span id="646">646</span>
+<span id="647">647</span>
 </pre><pre class="rust"><code><span class="doccomment">//! `PyClass` and related traits.</span>
 <span class="kw">use</span> <span class="kw">crate</span>::{
     <span class="ident">callback::IntoPyCallbackOutput</span>,
     <span class="ident">exceptions::PyTypeError</span>,
     <span class="ident">ffi</span>,
     <span class="ident">impl_::pyclass</span>::{
-        <span class="ident">assign_sequence_item_from_mapping</span>, <span class="ident">get_sequence_item_from_mapping</span>, <span class="ident">tp_dealloc</span>, <span class="ident">PyClassDict</span>,
-        <span class="ident">PyClassImpl</span>, <span class="ident">PyClassItems</span>, <span class="ident">PyClassWeakRef</span>,
+        <span class="ident">assign_sequence_item_from_mapping</span>, <span class="ident">get_sequence_item_from_mapping</span>, <span class="ident">tp_dealloc</span>, <span class="ident">PyClassImpl</span>,
+        <span class="ident">PyClassItemsIter</span>,
     },
-    <span class="ident">IntoPy</span>, <span class="ident">IntoPyPointer</span>, <span class="ident">PyCell</span>, <span class="ident">PyErr</span>, <span class="ident">PyMethodDefType</span>, <span class="ident">PyNativeType</span>, <span class="ident">PyObject</span>, <span class="ident">PyResult</span>,
-    <span class="ident">PyTypeInfo</span>, <span class="ident">Python</span>,
+    <span class="ident">IntoPy</span>, <span class="ident">IntoPyPointer</span>, <span class="ident">PyCell</span>, <span class="ident">PyErr</span>, <span class="ident">PyMethodDefType</span>, <span class="ident">PyObject</span>, <span class="ident">PyResult</span>, <span class="ident">PyTypeInfo</span>, <span class="ident">Python</span>,
 };
 <span class="kw">use</span> <span class="ident">std</span>::{
+    <span class="ident">cmp::Ordering</span>,
     <span class="ident">convert::TryInto</span>,
     <span class="ident">ffi</span>::{<span class="ident">CStr</span>, <span class="ident">CString</span>},
     <span class="ident">os::raw</span>::{<span class="ident">c_char</span>, <span class="ident">c_int</span>, <span class="ident">c_uint</span>, <span class="ident">c_void</span>},
     <span class="ident">ptr</span>,
 };
 
-<span class="doccomment">/// If `PyClass` is implemented for a Rust type `T`, then we can use `T` in the Python</span>
-<span class="doccomment">/// world, via `PyCell`.</span>
+<span class="doccomment">/// Types that can be used as Python classes.</span>
 <span class="doccomment">///</span>
-<span class="doccomment">/// The `#[pyclass]` attribute automatically implements this trait for your Rust struct,</span>
-<span class="doccomment">/// so you normally don&#39;t have to use this trait directly.</span>
+<span class="doccomment">/// The `#[pyclass]` attribute implements this trait for your Rust struct -</span>
+<span class="doccomment">/// you shouldn&#39;t implement this trait directly.</span>
 <span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">PyClass</span>:
     <span class="ident">PyTypeInfo</span><span class="op">&lt;</span><span class="ident">AsRefTarget</span> <span class="op">=</span> <span class="ident">PyCell</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="op">+</span> <span class="ident">PyClassImpl</span><span class="op">&lt;</span><span class="ident">Layout</span> <span class="op">=</span> <span class="ident">PyCell</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span><span class="op">&gt;</span>
 {
-    <span class="doccomment">/// Specify this class has `#[pyclass(dict)]` or not.</span>
-    <span class="kw">type</span> <span class="ident">Dict</span>: <span class="ident">PyClassDict</span>;
-    <span class="doccomment">/// Specify this class has `#[pyclass(weakref)]` or not.</span>
-    <span class="kw">type</span> <span class="ident">WeakRef</span>: <span class="ident">PyClassWeakRef</span>;
-    <span class="doccomment">/// The closest native ancestor. This is `PyAny` by default, and when you declare</span>
-    <span class="doccomment">/// `#[pyclass(extends=PyDict)]`, it&#39;s `PyDict`.</span>
-    <span class="kw">type</span> <span class="ident">BaseNativeType</span>: <span class="ident">PyTypeInfo</span> <span class="op">+</span> <span class="ident">PyNativeType</span>;
+    <span class="doccomment">/// Whether the pyclass is frozen.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// This can be enabled via `#[pyclass(frozen)]`.</span>
+    <span class="kw">type</span> <span class="ident">Frozen</span>: <span class="ident">Frozen</span>;
 }
 
 <span class="kw">fn</span> <span class="ident">into_raw</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>(<span class="ident">vec</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>) -&gt; <span class="kw-2">*mut</span> <span class="ident">c_void</span> {
@@ -639,7 +696,7 @@
             <span class="ident">tp_dealloc</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>,
             <span class="ident">T::dict_offset</span>(),
             <span class="ident">T::weaklist_offset</span>(),
-            <span class="kw-2">&amp;</span><span class="ident">T::for_all_items</span>,
+            <span class="ident">T::items_iter</span>,
             <span class="ident">T::IS_BASETYPE</span>,
             <span class="ident">T::IS_MAPPING</span>,
         )
@@ -660,7 +717,7 @@
     <span class="ident">tp_dealloc</span>: <span class="ident">ffi::destructor</span>,
     <span class="ident">dict_offset</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">ffi::Py_ssize_t</span><span class="op">&gt;</span>,
     <span class="ident">weaklist_offset</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">ffi::Py_ssize_t</span><span class="op">&gt;</span>,
-    <span class="ident">for_all_items</span>: <span class="kw-2">&amp;</span><span class="kw">dyn</span> <span class="ident">Fn</span>(<span class="kw-2">&amp;mut</span> <span class="kw">dyn</span> <span class="ident">FnMut</span>(<span class="kw-2">&amp;</span><span class="ident">PyClassItems</span>)),
+    <span class="ident">get_items_iter</span>: <span class="kw">fn</span>() -&gt; <span class="ident">PyClassItemsIter</span>,
     <span class="ident">is_basetype</span>: <span class="ident">bool</span>,
     <span class="ident">is_mapping</span>: <span class="ident">bool</span>,
 ) -&gt; <span class="ident">PyResult</span><span class="op">&lt;</span><span class="kw-2">*mut</span> <span class="ident">ffi::PyTypeObject</span><span class="op">&gt;</span> {
@@ -688,7 +745,7 @@
     <span class="kw">let</span> <span class="ident">PyClassInfo</span> {
         <span class="ident">method_defs</span>,
         <span class="ident">property_defs</span>,
-    } <span class="op">=</span> <span class="ident">method_defs_to_pyclass_info</span>(<span class="ident">for_all_items</span>, <span class="ident">dict_offset</span>.<span class="ident">is_none</span>());
+    } <span class="op">=</span> <span class="ident">method_defs_to_pyclass_info</span>(<span class="ident">get_items_iter</span>(), <span class="ident">dict_offset</span>.<span class="ident">is_none</span>());
 
     <span class="comment">// normal methods</span>
     <span class="kw">if</span> <span class="op">!</span><span class="ident">method_defs</span>.<span class="ident">is_empty</span>() {
@@ -711,7 +768,7 @@
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">all</span>(<span class="ident">not</span>(<span class="ident">Py_3_9</span>), <span class="ident">not</span>(<span class="ident">Py_LIMITED_API</span>)))]</span>
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">buffer_procs</span>: <span class="ident">ffi::PyBufferProcs</span> <span class="op">=</span> <span class="ident">Default::default</span>();
 
-    <span class="ident">for_all_items</span>(<span class="kw-2">&amp;mut</span> <span class="op">|</span><span class="ident">items</span><span class="op">|</span> {
+    <span class="kw">for</span> <span class="ident">items</span> <span class="kw">in</span> <span class="ident">get_items_iter</span>() {
         <span class="kw">for</span> <span class="ident">slot</span> <span class="kw">in</span> <span class="ident">items</span>.<span class="ident">slots</span> {
             <span class="kw">match</span> <span class="ident">slot</span>.<span class="ident">slot</span> {
                 <span class="ident">ffi::Py_tp_new</span> =&gt; <span class="ident">has_new</span> <span class="op">=</span> <span class="bool-val">true</span>,
@@ -733,7 +790,7 @@
             }
         }
         <span class="ident">slots</span>.<span class="ident">extend_from_slice</span>(<span class="ident">items</span>.<span class="ident">slots</span>);
-    });
+    }
 
     <span class="kw">if</span> <span class="op">!</span><span class="ident">is_mapping</span> {
         <span class="comment">// If mapping methods implemented, define sequence methods get implemented too.</span>
@@ -911,14 +968,11 @@
     <span class="ident">property_defs</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">ffi::PyGetSetDef</span><span class="op">&gt;</span>,
 }
 
-<span class="kw">fn</span> <span class="ident">method_defs_to_pyclass_info</span>(
-    <span class="ident">for_all_items</span>: <span class="kw-2">&amp;</span><span class="kw">dyn</span> <span class="ident">Fn</span>(<span class="kw-2">&amp;mut</span> <span class="kw">dyn</span> <span class="ident">FnMut</span>(<span class="kw-2">&amp;</span><span class="ident">PyClassItems</span>)),
-    <span class="ident">has_dict</span>: <span class="ident">bool</span>,
-) -&gt; <span class="ident">PyClassInfo</span> {
+<span class="kw">fn</span> <span class="ident">method_defs_to_pyclass_info</span>(<span class="ident">items_iter</span>: <span class="ident">PyClassItemsIter</span>, <span class="ident">has_dict</span>: <span class="ident">bool</span>) -&gt; <span class="ident">PyClassInfo</span> {
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">method_defs</span> <span class="op">=</span> <span class="ident">Vec::new</span>();
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">property_defs_map</span> <span class="op">=</span> <span class="ident">std::collections::HashMap::new</span>();
 
-    <span class="ident">for_all_items</span>(<span class="kw-2">&amp;mut</span> <span class="op">|</span><span class="ident">items</span><span class="op">|</span> {
+    <span class="kw">for</span> <span class="ident">items</span> <span class="kw">in</span> <span class="ident">items_iter</span> {
         <span class="kw">for</span> <span class="ident">def</span> <span class="kw">in</span> <span class="ident">items</span>.<span class="ident">methods</span> {
             <span class="kw">match</span> <span class="ident">def</span> {
                 <span class="ident">PyMethodDefType::Getter</span>(<span class="ident">getter</span>) =&gt; {
@@ -941,7 +995,7 @@
                 <span class="ident">PyMethodDefType::ClassAttribute</span>(<span class="kw">_</span>) =&gt; {}
             }
         }
-    });
+    }
 
     <span class="comment">// TODO: use into_values when on MSRV Rust &gt;= 1.54</span>
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">property_defs</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">property_defs_map</span>
@@ -962,7 +1016,7 @@
             <span class="ident">name</span>: <span class="string">&quot;__dict__\0&quot;</span>.<span class="ident">as_ptr</span>() <span class="kw">as</span> <span class="kw-2">*mut</span> <span class="ident">c_char</span>,
             <span class="ident">get</span>: <span class="prelude-val">Some</span>(<span class="ident">ffi::PyObject_GenericGetDict</span>),
             <span class="ident">set</span>: <span class="prelude-val">Some</span>(<span class="ident">ffi::PyObject_GenericSetDict</span>),
-            <span class="ident">doc</span>: <span class="ident">ptr::null_mut</span>(),
+            <span class="ident">doc</span>: <span class="ident">ptr::null</span>(),
             <span class="ident">closure</span>: <span class="ident">ptr::null_mut</span>(),
         });
     }
@@ -1022,7 +1076,7 @@
     <span class="ident">name</span>: <span class="ident">ptr::null_mut</span>(),
     <span class="ident">get</span>: <span class="prelude-val">None</span>,
     <span class="ident">set</span>: <span class="prelude-val">None</span>,
-    <span class="ident">doc</span>: <span class="ident">ptr::null_mut</span>(),
+    <span class="ident">doc</span>: <span class="ident">ptr::null</span>(),
     <span class="ident">closure</span>: <span class="ident">ptr::null_mut</span>(),
 };
 
@@ -1044,6 +1098,7 @@
 }
 
 <span class="kw">impl</span> <span class="ident">CompareOp</span> {
+    <span class="doccomment">/// Conversion from the C enum.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">from_raw</span>(<span class="ident">op</span>: <span class="ident">c_int</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span> {
         <span class="kw">match</span> <span class="ident">op</span> {
             <span class="ident">ffi::Py_LT</span> =&gt; <span class="prelude-val">Some</span>(<span class="ident">CompareOp::Lt</span>),
@@ -1053,6 +1108,37 @@
             <span class="ident">ffi::Py_GT</span> =&gt; <span class="prelude-val">Some</span>(<span class="ident">CompareOp::Gt</span>),
             <span class="ident">ffi::Py_GE</span> =&gt; <span class="prelude-val">Some</span>(<span class="ident">CompareOp::Ge</span>),
             <span class="kw">_</span> =&gt; <span class="prelude-val">None</span>,
+        }
+    }
+
+    <span class="doccomment">/// Returns if a Rust [`std::cmp::Ordering`] matches this ordering query.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// Usage example:</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// ```rust</span>
+    <span class="doccomment">/// # use pyo3::prelude::*;</span>
+    <span class="doccomment">/// # use pyo3::class::basic::CompareOp;</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// #[pyclass]</span>
+    <span class="doccomment">/// struct Size {</span>
+    <span class="doccomment">///     size: usize</span>
+    <span class="doccomment">/// }</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// #[pymethods]</span>
+    <span class="doccomment">/// impl Size {</span>
+    <span class="doccomment">///     fn __richcmp__(&amp;self, other: &amp;Size, op: CompareOp) -&gt; bool {</span>
+    <span class="doccomment">///         op.matches(self.size.cmp(&amp;other.size))</span>
+    <span class="doccomment">///     }</span>
+    <span class="doccomment">/// }</span>
+    <span class="doccomment">/// ```</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">matches</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">result</span>: <span class="ident">Ordering</span>) -&gt; <span class="ident">bool</span> {
+        <span class="kw">match</span> <span class="self">self</span> {
+            <span class="ident">CompareOp::Eq</span> =&gt; <span class="ident">result</span> <span class="op">==</span> <span class="ident">Ordering::Equal</span>,
+            <span class="ident">CompareOp::Ne</span> =&gt; <span class="ident">result</span> <span class="op">!</span><span class="op">=</span> <span class="ident">Ordering::Equal</span>,
+            <span class="ident">CompareOp::Lt</span> =&gt; <span class="ident">result</span> <span class="op">==</span> <span class="ident">Ordering::Less</span>,
+            <span class="ident">CompareOp::Le</span> =&gt; <span class="ident">result</span> <span class="op">!</span><span class="op">=</span> <span class="ident">Ordering::Greater</span>,
+            <span class="ident">CompareOp::Gt</span> =&gt; <span class="ident">result</span> <span class="op">==</span> <span class="ident">Ordering::Greater</span>,
+            <span class="ident">CompareOp::Ge</span> =&gt; <span class="ident">result</span> <span class="op">!</span><span class="op">=</span> <span class="ident">Ordering::Less</span>,
         }
     }
 }
@@ -1165,6 +1251,46 @@
         ))
     })
 }
+
+<span class="doccomment">/// A workaround for [associated const equality](https://github.com/rust-lang/rust/issues/92827).</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// This serves to have True / False values in the [`PyClass`] trait&#39;s `Frozen` type.</span>
+<span class="attribute">#[<span class="ident">doc</span>(<span class="ident">hidden</span>)]</span>
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">boolean_struct</span> {
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">mod</span> <span class="ident">private</span> {
+        <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
+
+        <span class="doccomment">/// A way to &quot;seal&quot; the boolean traits.</span>
+        <span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">Boolean</span> {}
+
+        <span class="kw">impl</span> <span class="ident">Boolean</span> <span class="kw">for</span> <span class="ident">True</span> {}
+        <span class="kw">impl</span> <span class="ident">Boolean</span> <span class="kw">for</span> <span class="ident">False</span> {}
+    }
+
+    <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">True</span>(());
+    <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">False</span>(());
+}
+
+<span class="doccomment">/// A trait which is used to describe whether a `#[pyclass]` is frozen.</span>
+<span class="attribute">#[<span class="ident">doc</span>(<span class="ident">hidden</span>)]</span>
+<span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">Frozen</span>: <span class="ident">boolean_struct::private::Boolean</span> {}
+
+<span class="kw">impl</span> <span class="ident">Frozen</span> <span class="kw">for</span> <span class="ident">boolean_struct::True</span> {}
+<span class="kw">impl</span> <span class="ident">Frozen</span> <span class="kw">for</span> <span class="ident">boolean_struct::False</span> {}
+
+<span class="kw">mod</span> <span class="ident">tests</span> {
+    <span class="attribute">#[<span class="ident">test</span>]</span>
+    <span class="kw">fn</span> <span class="ident">test_compare_op_matches</span>() {
+        <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::CompareOp</span>;
+        <span class="kw">use</span> <span class="ident">std::cmp::Ordering</span>;
+
+        <span class="macro">assert!</span>(<span class="ident">CompareOp::Eq</span>.<span class="ident">matches</span>(<span class="ident">Ordering::Equal</span>));
+        <span class="macro">assert!</span>(<span class="ident">CompareOp::Ne</span>.<span class="ident">matches</span>(<span class="ident">Ordering::Less</span>));
+        <span class="macro">assert!</span>(<span class="ident">CompareOp::Ge</span>.<span class="ident">matches</span>(<span class="ident">Ordering::Greater</span>));
+        <span class="macro">assert!</span>(<span class="ident">CompareOp::Gt</span>.<span class="ident">matches</span>(<span class="ident">Ordering::Greater</span>));
+        <span class="macro">assert!</span>(<span class="ident">CompareOp::Le</span>.<span class="ident">matches</span>(<span class="ident">Ordering::Equal</span>));
+        <span class="macro">assert!</span>(<span class="ident">CompareOp::Lt</span>.<span class="ident">matches</span>(<span class="ident">Ordering::Less</span>));
+    }
+}
 </code></pre></div>
-</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="pyo3" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.62.0-nightly (e745b4ddb 2022-04-07)" ></div>
-</body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="pyo3" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.65.0-nightly (f03ce3096 2022-08-08)" ></div></body></html>

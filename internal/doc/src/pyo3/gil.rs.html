@@ -1,9 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/gil.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>gil.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../ayu.css" disabled><link rel="stylesheet" type="text/css" href="../../dark.css" disabled><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../storage.js"></script><script src="../../crates.js"></script><script defer src="../../main.js"></script><script defer src="../../source-script.js"></script><script defer src="../../scrape-examples.js"></script><script defer src="../../source-files.js"></script>
-    <noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="sidebar-logo" href="../../pyo3/index.html"><div class="logo-container"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></div>
-        </a><h2 class="location"></h2>
-    </nav>
-    <nav class="sidebar"><a class="sidebar-logo" href="../../pyo3/index.html"><div class="logo-container"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></div>
-        </a></nav><main><div class="width-limiter"><div class="sub-container"><a class="sub-logo-container" href="../../pyo3/index.html"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></a><nav class="sub"><div class="theme-picker hidden"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu" title="themes"><img width="22" height="22" alt="Pick another theme!" src="../../brush.svg"></button><div id="theme-choices" role="menu"></div></div><form class="search-form"><div class="search-container"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><button type="button" id="help-button" title="help">?</button><a id="settings-menu" href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../wheel.svg"></a></div></form></nav></div><section id="main-content" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/gil.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>gil.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../ayu.css" disabled><link rel="stylesheet" type="text/css" href="../../dark.css" disabled><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../storage.js"></script><script defer src="../../source-script.js"></script><script defer src="../../source-files.js"></script><script defer src="../../main.js"></script><script defer src="../../scrape-examples.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="sidebar-logo" href="../../pyo3/index.html"><div class="logo-container"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></div></a><h2 class="location"></h2></nav><nav class="sidebar"><a class="sidebar-logo" href="../../pyo3/index.html"><div class="logo-container"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></div></a></nav><main><div class="width-limiter"><div class="sub-container"><a class="sub-logo-container" href="../../pyo3/index.html"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></a><nav class="sub"><form class="search-form"><div class="search-container"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><button type="button">?</button></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../wheel.svg"></a></div></div></form></nav></div><section id="main-content" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">1</span>
 <span id="2">2</span>
 <span id="3">3</span>
 <span id="4">4</span>
@@ -852,6 +847,35 @@
 <span id="847">847</span>
 <span id="848">848</span>
 <span id="849">849</span>
+<span id="850">850</span>
+<span id="851">851</span>
+<span id="852">852</span>
+<span id="853">853</span>
+<span id="854">854</span>
+<span id="855">855</span>
+<span id="856">856</span>
+<span id="857">857</span>
+<span id="858">858</span>
+<span id="859">859</span>
+<span id="860">860</span>
+<span id="861">861</span>
+<span id="862">862</span>
+<span id="863">863</span>
+<span id="864">864</span>
+<span id="865">865</span>
+<span id="866">866</span>
+<span id="867">867</span>
+<span id="868">868</span>
+<span id="869">869</span>
+<span id="870">870</span>
+<span id="871">871</span>
+<span id="872">872</span>
+<span id="873">873</span>
+<span id="874">874</span>
+<span id="875">875</span>
+<span id="876">876</span>
+<span id="877">877</span>
+<span id="878">878</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright (c) 2017-present PyO3 Project and Contributors</span>
 
 <span class="doccomment">//! Interaction with Python&#39;s global interpreter lock</span>
@@ -951,14 +975,16 @@
 <span class="doccomment">/// - The return value of the closure must not contain any Python value, _including_ `PyResult`.</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// # Examples</span>
-<span class="doccomment">/// ```rust</span>
-<span class="doccomment">/// use pyo3::prelude::*;</span>
 <span class="doccomment">///</span>
-<span class="doccomment">/// # fn main() -&gt; PyResult&lt;()&gt;{</span>
+<span class="doccomment">/// ```rust</span>
 <span class="doccomment">/// unsafe {</span>
-<span class="doccomment">///     pyo3::with_embedded_python_interpreter(|py| py.run(&quot;print(&#39;Hello World&#39;)&quot;, None, None))</span>
+<span class="doccomment">///     pyo3::with_embedded_python_interpreter(|py| {</span>
+<span class="doccomment">///        if let Err(e) = py.run(&quot;print(&#39;Hello World&#39;)&quot;, None, None){</span>
+<span class="doccomment">///            // We must make sure to not return a `PyErr`!</span>
+<span class="doccomment">///            e.print(py);</span>
+<span class="doccomment">///        }</span>
+<span class="doccomment">///     });</span>
 <span class="doccomment">/// }</span>
-<span class="doccomment">/// # }</span>
 <span class="doccomment">/// ```</span>
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">not</span>(<span class="ident">PyPy</span>))]</span>
 <span class="kw">pub</span> <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">with_embedded_python_interpreter</span><span class="op">&lt;</span><span class="ident">F</span>, <span class="ident">R</span><span class="op">&gt;</span>(<span class="ident">f</span>: <span class="ident">F</span>) -&gt; <span class="ident">R</span>
@@ -1028,7 +1054,7 @@
     <span class="doccomment">/// `GILGuard` will also contain a `GILPool`.</span>
     <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">acquire</span>() -&gt; <span class="ident">GILGuard</span> {
         <span class="comment">// Maybe auto-initialize the GIL:</span>
-        <span class="comment">//  - If auto-initialize feature set and supported, try to initalize the interpreter.</span>
+        <span class="comment">//  - If auto-initialize feature set and supported, try to initialize the interpreter.</span>
         <span class="comment">//  - If the auto-initialize feature is set but unsupported, emit hard errors only when the</span>
         <span class="comment">//    extension-module feature is not activated - extension modules don&#39;t care about</span>
         <span class="comment">//    auto-initialize so this avoids breaking existing builds.</span>
@@ -1053,7 +1079,7 @@
                     <span class="macro">assert_ne!</span>(
                         <span class="ident">ffi::Py_IsInitialized</span>(),
                         <span class="number">0</span>,
-                        <span class="string">&quot;The Python interpreter is not initalized and the `auto-initialize` \
+                        <span class="string">&quot;The Python interpreter is not initialized and the `auto-initialize` \
                          feature is not enabled.\n\n\
                          Consider calling `pyo3::prepare_freethreaded_python()` before attempting \
                          to use Python APIs.&quot;</span>
@@ -1349,6 +1375,7 @@
 <span class="kw">mod</span> <span class="ident">tests</span> {
     <span class="kw">use</span> <span class="kw">super</span>::{<span class="ident">gil_is_acquired</span>, <span class="ident">GILPool</span>, <span class="ident">GIL_COUNT</span>, <span class="ident">OWNED_OBJECTS</span>, <span class="ident">POOL</span>};
     <span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">ffi</span>, <span class="ident">gil</span>, <span class="ident">AsPyPointer</span>, <span class="ident">IntoPyPointer</span>, <span class="ident">PyObject</span>, <span class="ident">Python</span>, <span class="ident">ToPyObject</span>};
+    <span class="kw">use</span> <span class="ident">parking_lot</span>::{<span class="ident">const_mutex</span>, <span class="ident">Condvar</span>, <span class="ident">Mutex</span>};
     <span class="kw">use</span> <span class="ident">std::ptr::NonNull</span>;
 
     <span class="kw">fn</span> <span class="ident">get_object</span>(<span class="ident">py</span>: <span class="ident">Python</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) -&gt; <span class="ident">PyObject</span> {
@@ -1553,16 +1580,42 @@
         <span class="macro">assert_eq!</span>(<span class="ident">count</span> <span class="op">+</span> <span class="number">1</span>, <span class="ident">c</span>.<span class="ident">get_refcnt</span>(<span class="ident">py</span>));
     }
 
+    <span class="kw">struct</span> <span class="ident">Event</span> {
+        <span class="ident">set</span>: <span class="ident">Mutex</span><span class="op">&lt;</span><span class="ident">bool</span><span class="op">&gt;</span>,
+        <span class="ident">wait</span>: <span class="ident">Condvar</span>,
+    }
+
+    <span class="kw">impl</span> <span class="ident">Event</span> {
+        <span class="kw">const</span> <span class="kw">fn</span> <span class="ident">new</span>() -&gt; <span class="self">Self</span> {
+            <span class="self">Self</span> {
+                <span class="ident">set</span>: <span class="ident">const_mutex</span>(<span class="bool-val">false</span>),
+                <span class="ident">wait</span>: <span class="ident">Condvar::new</span>(),
+            }
+        }
+
+        <span class="kw">fn</span> <span class="ident">set</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) {
+            <span class="kw-2">*</span><span class="self">self</span>.<span class="ident">set</span>.<span class="ident">lock</span>() <span class="op">=</span> <span class="bool-val">true</span>;
+            <span class="self">self</span>.<span class="ident">wait</span>.<span class="ident">notify_all</span>();
+        }
+
+        <span class="kw">fn</span> <span class="ident">wait</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) {
+            <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">set</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">set</span>.<span class="ident">lock</span>();
+            <span class="kw">while</span> <span class="op">!</span><span class="kw-2">*</span><span class="ident">set</span> {
+                <span class="self">self</span>.<span class="ident">wait</span>.<span class="ident">wait</span>(<span class="kw-2">&amp;mut</span> <span class="ident">set</span>);
+            }
+        }
+    }
+
     <span class="attribute">#[<span class="ident">test</span>]</span>
+    <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">not</span>(<span class="ident">target_arch</span> <span class="op">=</span> <span class="string">&quot;wasm32&quot;</span>))]</span> <span class="comment">// We are building wasm Python with pthreads disabled</span>
     <span class="kw">fn</span> <span class="ident">test_clone_without_gil</span>() {
         <span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">Py</span>, <span class="ident">PyAny</span>};
-        <span class="kw">use</span> <span class="ident">std::sync::atomic</span>::{<span class="ident">AtomicBool</span>, <span class="ident">Ordering</span>};
         <span class="kw">use</span> <span class="ident">std</span>::{<span class="ident">sync::Arc</span>, <span class="ident">thread</span>};
 
-        <span class="comment">// Some spinlocks for synchronizing</span>
-        <span class="kw">static</span> <span class="ident">GIL_ACQUIRED</span>: <span class="ident">AtomicBool</span> <span class="op">=</span> <span class="ident">AtomicBool::new</span>(<span class="bool-val">false</span>);
-        <span class="kw">static</span> <span class="ident">OBJECT_CLONED</span>: <span class="ident">AtomicBool</span> <span class="op">=</span> <span class="ident">AtomicBool::new</span>(<span class="bool-val">false</span>);
-        <span class="kw">static</span> <span class="ident">REFCNT_CHECKED</span>: <span class="ident">AtomicBool</span> <span class="op">=</span> <span class="ident">AtomicBool::new</span>(<span class="bool-val">false</span>);
+        <span class="comment">// Some events for synchronizing</span>
+        <span class="kw">static</span> <span class="ident">GIL_ACQUIRED</span>: <span class="ident">Event</span> <span class="op">=</span> <span class="ident">Event::new</span>();
+        <span class="kw">static</span> <span class="ident">OBJECT_CLONED</span>: <span class="ident">Event</span> <span class="op">=</span> <span class="ident">Event::new</span>();
+        <span class="kw">static</span> <span class="ident">REFCNT_CHECKED</span>: <span class="ident">Event</span> <span class="op">=</span> <span class="ident">Event::new</span>();
 
         <span class="ident">Python::with_gil</span>(<span class="op">|</span><span class="ident">py</span><span class="op">|</span> {
             <span class="kw">let</span> <span class="ident">obj</span>: <span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">Py</span><span class="op">&lt;</span><span class="ident">PyAny</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">Arc::new</span>(<span class="ident">get_object</span>(<span class="ident">py</span>));
@@ -1577,31 +1630,31 @@
             <span class="kw">let</span> <span class="ident">handle</span> <span class="op">=</span> <span class="ident">thread::spawn</span>(<span class="kw">move</span> <span class="op">|</span><span class="op">|</span> {
                 <span class="ident">Python::with_gil</span>(<span class="kw">move</span> <span class="op">|</span><span class="ident">py</span><span class="op">|</span> {
                     <span class="macro">println!</span>(<span class="string">&quot;3. The GIL has been acquired on another thread.&quot;</span>);
-                    <span class="ident">GIL_ACQUIRED</span>.<span class="ident">store</span>(<span class="bool-val">true</span>, <span class="ident">Ordering::Release</span>);
+                    <span class="ident">GIL_ACQUIRED</span>.<span class="ident">set</span>();
 
-                    <span class="comment">// Spin a bit while the main thread registers obj in POOL</span>
-                    <span class="kw">while</span> <span class="op">!</span><span class="ident">OBJECT_CLONED</span>.<span class="ident">load</span>(<span class="ident">Ordering::Acquire</span>) {}
+                    <span class="comment">// Wait while the main thread registers obj in POOL</span>
+                    <span class="ident">OBJECT_CLONED</span>.<span class="ident">wait</span>();
                     <span class="macro">println!</span>(<span class="string">&quot;5. Checking refcnt&quot;</span>);
                     <span class="macro">assert_eq!</span>(<span class="ident">thread_obj</span>.<span class="ident">get_refcnt</span>(<span class="ident">py</span>), <span class="ident">count</span>);
 
-                    <span class="ident">REFCNT_CHECKED</span>.<span class="ident">store</span>(<span class="bool-val">true</span>, <span class="ident">Ordering::Release</span>);
+                    <span class="ident">REFCNT_CHECKED</span>.<span class="ident">set</span>();
                 })
             });
 
             <span class="kw">let</span> <span class="ident">cloned</span> <span class="op">=</span> <span class="ident">py</span>.<span class="ident">allow_threads</span>(<span class="op">|</span><span class="op">|</span> {
                 <span class="macro">println!</span>(<span class="string">&quot;2. The GIL has been released.&quot;</span>);
 
-                <span class="comment">// spin until the gil has been acquired on the thread.</span>
-                <span class="kw">while</span> <span class="op">!</span><span class="ident">GIL_ACQUIRED</span>.<span class="ident">load</span>(<span class="ident">Ordering::Acquire</span>) {}
+                <span class="comment">// Wait until the GIL has been acquired on the thread.</span>
+                <span class="ident">GIL_ACQUIRED</span>.<span class="ident">wait</span>();
 
                 <span class="macro">println!</span>(<span class="string">&quot;4. The other thread is now hogging the GIL, we clone without it held&quot;</span>);
                 <span class="comment">// Cloning without GIL should not update reference count</span>
                 <span class="kw">let</span> <span class="ident">cloned</span> <span class="op">=</span> <span class="ident">Py::clone</span>(<span class="kw-2">&amp;</span><span class="kw-2">*</span><span class="ident">obj</span>);
-                <span class="ident">OBJECT_CLONED</span>.<span class="ident">store</span>(<span class="bool-val">true</span>, <span class="ident">Ordering::Release</span>);
+                <span class="ident">OBJECT_CLONED</span>.<span class="ident">set</span>();
                 <span class="ident">cloned</span>
             });
 
-            <span class="kw">while</span> <span class="op">!</span><span class="ident">REFCNT_CHECKED</span>.<span class="ident">load</span>(<span class="ident">Ordering::Acquire</span>) {}
+            <span class="ident">REFCNT_CHECKED</span>.<span class="ident">wait</span>();
 
             <span class="comment">// Returning from allow_threads doesn&#39;t clear the pool</span>
             <span class="ident">py</span>.<span class="ident">allow_threads</span>(<span class="op">|</span><span class="op">|</span> {
@@ -1625,13 +1678,13 @@
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
+    <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">not</span>(<span class="ident">target_arch</span> <span class="op">=</span> <span class="string">&quot;wasm32&quot;</span>))]</span> <span class="comment">// We are building wasm Python with pthreads disabled</span>
     <span class="kw">fn</span> <span class="ident">test_clone_in_other_thread</span>() {
         <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::Py</span>;
-        <span class="kw">use</span> <span class="ident">std::sync::atomic</span>::{<span class="ident">AtomicBool</span>, <span class="ident">Ordering</span>};
         <span class="kw">use</span> <span class="ident">std</span>::{<span class="ident">sync::Arc</span>, <span class="ident">thread</span>};
 
-        <span class="comment">// Some spinlocks for synchronizing</span>
-        <span class="kw">static</span> <span class="ident">OBJECT_CLONED</span>: <span class="ident">AtomicBool</span> <span class="op">=</span> <span class="ident">AtomicBool::new</span>(<span class="bool-val">false</span>);
+        <span class="comment">// Some events for synchronizing</span>
+        <span class="kw">static</span> <span class="ident">OBJECT_CLONED</span>: <span class="ident">Event</span> <span class="op">=</span> <span class="ident">Event::new</span>();
 
         <span class="kw">let</span> (<span class="ident">obj</span>, <span class="ident">count</span>, <span class="ident">ptr</span>) <span class="op">=</span> <span class="ident">Python::with_gil</span>(<span class="op">|</span><span class="ident">py</span><span class="op">|</span> {
             <span class="kw">let</span> <span class="ident">obj</span> <span class="op">=</span> <span class="ident">Arc::new</span>(<span class="ident">get_object</span>(<span class="ident">py</span>));
@@ -1643,10 +1696,10 @@
                 <span class="comment">// Cloning without GIL should not update reference count</span>
                 <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">clippy::redundant_clone</span>)]</span>
                 <span class="kw">let</span> <span class="kw">_</span> <span class="op">=</span> <span class="ident">Py::clone</span>(<span class="kw-2">&amp;</span><span class="kw-2">*</span><span class="ident">thread_obj</span>);
-                <span class="ident">OBJECT_CLONED</span>.<span class="ident">store</span>(<span class="bool-val">true</span>, <span class="ident">Ordering::Release</span>);
+                <span class="ident">OBJECT_CLONED</span>.<span class="ident">set</span>();
             });
 
-            <span class="kw">while</span> <span class="op">!</span><span class="ident">OBJECT_CLONED</span>.<span class="ident">load</span>(<span class="ident">Ordering::Acquire</span>) {}
+            <span class="ident">OBJECT_CLONED</span>.<span class="ident">wait</span>();
             <span class="macro">assert_eq!</span>(<span class="ident">count</span>, <span class="ident">obj</span>.<span class="ident">get_refcnt</span>(<span class="ident">py</span>));
 
             <span class="ident">t</span>.<span class="ident">join</span>().<span class="ident">unwrap</span>();
@@ -1702,5 +1755,4 @@
     }
 }
 </code></pre></div>
-</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="pyo3" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.62.0-nightly (e745b4ddb 2022-04-07)" ></div>
-</body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="pyo3" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.65.0-nightly (f03ce3096 2022-08-08)" ></div></body></html>

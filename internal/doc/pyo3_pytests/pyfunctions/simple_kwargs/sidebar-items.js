@@ -1,1 +1,1 @@
-initSidebarItems({"constant":[["DEF",""]],"fn":[["wrap",""]],"struct":[["PyO3Def",""]]});
+window.SIDEBAR_ITEMS = {"constant":[["DEF",""]],"struct":[["MakeDef",""]]};

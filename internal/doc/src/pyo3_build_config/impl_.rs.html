@@ -1,9 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `pyo3-build-config/src/impl_.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>impl_.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../ayu.css" disabled><link rel="stylesheet" type="text/css" href="../../dark.css" disabled><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../storage.js"></script><script src="../../crates.js"></script><script defer src="../../main.js"></script><script defer src="../../source-script.js"></script><script defer src="../../scrape-examples.js"></script><script defer src="../../source-files.js"></script>
-    <noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="sidebar-logo" href="../../pyo3_build_config/index.html"><div class="logo-container"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></div>
-        </a><h2 class="location"></h2>
-    </nav>
-    <nav class="sidebar"><a class="sidebar-logo" href="../../pyo3_build_config/index.html"><div class="logo-container"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></div>
-        </a></nav><main><div class="width-limiter"><div class="sub-container"><a class="sub-logo-container" href="../../pyo3_build_config/index.html"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></a><nav class="sub"><div class="theme-picker hidden"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu" title="themes"><img width="22" height="22" alt="Pick another theme!" src="../../brush.svg"></button><div id="theme-choices" role="menu"></div></div><form class="search-form"><div class="search-container"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><button type="button" id="help-button" title="help">?</button><a id="settings-menu" href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../wheel.svg"></a></div></form></nav></div><section id="main-content" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `pyo3-build-config/src/impl_.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>impl_.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../ayu.css" disabled><link rel="stylesheet" type="text/css" href="../../dark.css" disabled><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../storage.js"></script><script defer src="../../source-script.js"></script><script defer src="../../source-files.js"></script><script defer src="../../main.js"></script><script defer src="../../scrape-examples.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="sidebar-logo" href="../../pyo3_build_config/index.html"><div class="logo-container"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></div></a><h2 class="location"></h2></nav><nav class="sidebar"><a class="sidebar-logo" href="../../pyo3_build_config/index.html"><div class="logo-container"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></div></a></nav><main><div class="width-limiter"><div class="sub-container"><a class="sub-logo-container" href="../../pyo3_build_config/index.html"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></a><nav class="sub"><form class="search-form"><div class="search-container"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><button type="button">?</button></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../wheel.svg"></a></div></div></form></nav></div><section id="main-content" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">1</span>
 <span id="2">2</span>
 <span id="3">3</span>
 <span id="4">4</span>
@@ -2427,7 +2422,195 @@
 <span id="2422">2422</span>
 <span id="2423">2423</span>
 <span id="2424">2424</span>
-</pre><pre class="rust"><code><span class="kw">use</span> <span class="ident">std</span>::{
+<span id="2425">2425</span>
+<span id="2426">2426</span>
+<span id="2427">2427</span>
+<span id="2428">2428</span>
+<span id="2429">2429</span>
+<span id="2430">2430</span>
+<span id="2431">2431</span>
+<span id="2432">2432</span>
+<span id="2433">2433</span>
+<span id="2434">2434</span>
+<span id="2435">2435</span>
+<span id="2436">2436</span>
+<span id="2437">2437</span>
+<span id="2438">2438</span>
+<span id="2439">2439</span>
+<span id="2440">2440</span>
+<span id="2441">2441</span>
+<span id="2442">2442</span>
+<span id="2443">2443</span>
+<span id="2444">2444</span>
+<span id="2445">2445</span>
+<span id="2446">2446</span>
+<span id="2447">2447</span>
+<span id="2448">2448</span>
+<span id="2449">2449</span>
+<span id="2450">2450</span>
+<span id="2451">2451</span>
+<span id="2452">2452</span>
+<span id="2453">2453</span>
+<span id="2454">2454</span>
+<span id="2455">2455</span>
+<span id="2456">2456</span>
+<span id="2457">2457</span>
+<span id="2458">2458</span>
+<span id="2459">2459</span>
+<span id="2460">2460</span>
+<span id="2461">2461</span>
+<span id="2462">2462</span>
+<span id="2463">2463</span>
+<span id="2464">2464</span>
+<span id="2465">2465</span>
+<span id="2466">2466</span>
+<span id="2467">2467</span>
+<span id="2468">2468</span>
+<span id="2469">2469</span>
+<span id="2470">2470</span>
+<span id="2471">2471</span>
+<span id="2472">2472</span>
+<span id="2473">2473</span>
+<span id="2474">2474</span>
+<span id="2475">2475</span>
+<span id="2476">2476</span>
+<span id="2477">2477</span>
+<span id="2478">2478</span>
+<span id="2479">2479</span>
+<span id="2480">2480</span>
+<span id="2481">2481</span>
+<span id="2482">2482</span>
+<span id="2483">2483</span>
+<span id="2484">2484</span>
+<span id="2485">2485</span>
+<span id="2486">2486</span>
+<span id="2487">2487</span>
+<span id="2488">2488</span>
+<span id="2489">2489</span>
+<span id="2490">2490</span>
+<span id="2491">2491</span>
+<span id="2492">2492</span>
+<span id="2493">2493</span>
+<span id="2494">2494</span>
+<span id="2495">2495</span>
+<span id="2496">2496</span>
+<span id="2497">2497</span>
+<span id="2498">2498</span>
+<span id="2499">2499</span>
+<span id="2500">2500</span>
+<span id="2501">2501</span>
+<span id="2502">2502</span>
+<span id="2503">2503</span>
+<span id="2504">2504</span>
+<span id="2505">2505</span>
+<span id="2506">2506</span>
+<span id="2507">2507</span>
+<span id="2508">2508</span>
+<span id="2509">2509</span>
+<span id="2510">2510</span>
+<span id="2511">2511</span>
+<span id="2512">2512</span>
+<span id="2513">2513</span>
+<span id="2514">2514</span>
+<span id="2515">2515</span>
+<span id="2516">2516</span>
+<span id="2517">2517</span>
+<span id="2518">2518</span>
+<span id="2519">2519</span>
+<span id="2520">2520</span>
+<span id="2521">2521</span>
+<span id="2522">2522</span>
+<span id="2523">2523</span>
+<span id="2524">2524</span>
+<span id="2525">2525</span>
+<span id="2526">2526</span>
+<span id="2527">2527</span>
+<span id="2528">2528</span>
+<span id="2529">2529</span>
+<span id="2530">2530</span>
+<span id="2531">2531</span>
+<span id="2532">2532</span>
+<span id="2533">2533</span>
+<span id="2534">2534</span>
+<span id="2535">2535</span>
+<span id="2536">2536</span>
+<span id="2537">2537</span>
+<span id="2538">2538</span>
+<span id="2539">2539</span>
+<span id="2540">2540</span>
+<span id="2541">2541</span>
+<span id="2542">2542</span>
+<span id="2543">2543</span>
+<span id="2544">2544</span>
+<span id="2545">2545</span>
+<span id="2546">2546</span>
+<span id="2547">2547</span>
+<span id="2548">2548</span>
+<span id="2549">2549</span>
+<span id="2550">2550</span>
+<span id="2551">2551</span>
+<span id="2552">2552</span>
+<span id="2553">2553</span>
+<span id="2554">2554</span>
+<span id="2555">2555</span>
+<span id="2556">2556</span>
+<span id="2557">2557</span>
+<span id="2558">2558</span>
+<span id="2559">2559</span>
+<span id="2560">2560</span>
+<span id="2561">2561</span>
+<span id="2562">2562</span>
+<span id="2563">2563</span>
+<span id="2564">2564</span>
+<span id="2565">2565</span>
+<span id="2566">2566</span>
+<span id="2567">2567</span>
+<span id="2568">2568</span>
+<span id="2569">2569</span>
+<span id="2570">2570</span>
+<span id="2571">2571</span>
+<span id="2572">2572</span>
+<span id="2573">2573</span>
+<span id="2574">2574</span>
+<span id="2575">2575</span>
+<span id="2576">2576</span>
+<span id="2577">2577</span>
+<span id="2578">2578</span>
+<span id="2579">2579</span>
+<span id="2580">2580</span>
+<span id="2581">2581</span>
+<span id="2582">2582</span>
+<span id="2583">2583</span>
+<span id="2584">2584</span>
+<span id="2585">2585</span>
+<span id="2586">2586</span>
+<span id="2587">2587</span>
+<span id="2588">2588</span>
+<span id="2589">2589</span>
+<span id="2590">2590</span>
+<span id="2591">2591</span>
+<span id="2592">2592</span>
+<span id="2593">2593</span>
+<span id="2594">2594</span>
+<span id="2595">2595</span>
+<span id="2596">2596</span>
+<span id="2597">2597</span>
+<span id="2598">2598</span>
+<span id="2599">2599</span>
+<span id="2600">2600</span>
+<span id="2601">2601</span>
+<span id="2602">2602</span>
+<span id="2603">2603</span>
+<span id="2604">2604</span>
+</pre><pre class="rust"><code><span class="doccomment">//! Main implementation module included in both the `pyo3-build-config` library crate</span>
+<span class="doccomment">//! and its build script.</span>
+
+<span class="comment">// Optional python3.dll import library generator for Windows</span>
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;python3-dll-a&quot;</span>)]</span>
+<span class="attribute">#[<span class="ident">path</span> <span class="op">=</span> <span class="string">&quot;import_lib.rs&quot;</span>]</span>
+<span class="kw">mod</span> <span class="ident">import_lib</span>;
+
+<span class="kw">use</span> <span class="ident">std</span>::{
     <span class="ident">collections</span>::{<span class="ident">HashMap</span>, <span class="ident">HashSet</span>},
     <span class="ident">convert::AsRef</span>,
     <span class="ident">env</span>,
@@ -2490,7 +2673,7 @@
 <span class="doccomment">///</span>
 <span class="doccomment">/// When the `PYO3_NO_PYTHON` variable is set, or during cross compile situations, then alternative</span>
 <span class="doccomment">/// strategies are used to populate this type.</span>
-<span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">test</span>, <span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>))]</span>
+<span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">test</span>, <span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>))]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">InterpreterConfig</span> {
     <span class="doccomment">/// The Python implementation flavor.</span>
     <span class="doccomment">///</span>
@@ -2654,6 +2837,13 @@ print(&quot;mingw&quot;, get_platform().startswith(&quot;mingw&quot;))
 &quot;#</span>;
         <span class="kw">let</span> <span class="ident">output</span> <span class="op">=</span> <span class="ident">run_python_script</span>(<span class="ident">interpreter</span>.<span class="ident">as_ref</span>(), <span class="ident">SCRIPT</span>)<span class="question-mark">?</span>;
         <span class="kw">let</span> <span class="ident">map</span>: <span class="ident">HashMap</span><span class="op">&lt;</span><span class="ident">String</span>, <span class="ident">String</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">parse_script_output</span>(<span class="kw-2">&amp;</span><span class="ident">output</span>);
+
+        <span class="macro">ensure!</span>(
+            <span class="op">!</span><span class="ident">map</span>.<span class="ident">is_empty</span>(),
+            <span class="string">&quot;broken Python interpreter: {}&quot;</span>,
+            <span class="ident">interpreter</span>.<span class="ident">as_ref</span>().<span class="ident">display</span>()
+        );
+
         <span class="kw">let</span> <span class="ident">shared</span> <span class="op">=</span> <span class="ident">map</span>[<span class="string">&quot;shared&quot;</span>].<span class="ident">as_str</span>() <span class="op">==</span> <span class="string">&quot;True&quot;</span>;
 
         <span class="kw">let</span> <span class="ident">version</span> <span class="op">=</span> <span class="ident">PythonVersion</span> {
@@ -2787,7 +2977,7 @@ print(&quot;mingw&quot;, get_platform().startswith(&quot;mingw&quot;))
     <span class="attribute">#[<span class="ident">doc</span>(<span class="ident">hidden</span>)]</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">from_cargo_dep_env</span>() -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span><span class="op">&gt;</span> {
         <span class="ident">cargo_env_var</span>(<span class="string">&quot;DEP_PYTHON_PYO3_CONFIG&quot;</span>)
-            .<span class="ident">map</span>(<span class="op">|</span><span class="ident">buf</span><span class="op">|</span> <span class="ident">InterpreterConfig::from_reader</span>(<span class="ident">buf</span>.<span class="ident">replace</span>(<span class="string">&quot;\\n&quot;</span>, <span class="string">&quot;\n&quot;</span>).<span class="ident">as_bytes</span>()))
+            .<span class="ident">map</span>(<span class="op">|</span><span class="ident">buf</span><span class="op">|</span> <span class="ident">InterpreterConfig::from_reader</span>(<span class="kw-2">&amp;</span><span class="kw-2">*</span><span class="ident">unescape</span>(<span class="kw-2">&amp;</span><span class="ident">buf</span>)))
     }
 
     <span class="attribute">#[<span class="ident">doc</span>(<span class="ident">hidden</span>)]</span>
@@ -2854,6 +3044,14 @@ print(&quot;mingw&quot;, get_platform().startswith(&quot;mingw&quot;))
         <span class="kw">let</span> <span class="ident">version</span> <span class="op">=</span> <span class="ident">version</span>.<span class="ident">ok_or</span>(<span class="string">&quot;missing value for version&quot;</span>)<span class="question-mark">?</span>;
         <span class="kw">let</span> <span class="ident">implementation</span> <span class="op">=</span> <span class="ident">implementation</span>.<span class="ident">unwrap_or</span>(<span class="ident">PythonImplementation::CPython</span>);
         <span class="kw">let</span> <span class="ident">abi3</span> <span class="op">=</span> <span class="ident">abi3</span>.<span class="ident">unwrap_or</span>(<span class="bool-val">false</span>);
+        <span class="comment">// Fixup lib_name if it&#39;s not set</span>
+        <span class="kw">let</span> <span class="ident">lib_name</span> <span class="op">=</span> <span class="ident">lib_name</span>.<span class="ident">or_else</span>(<span class="op">|</span><span class="op">|</span> {
+            <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="prelude-val">Ok</span>(<span class="ident">target</span>)) <span class="op">=</span> <span class="ident">env::var</span>(<span class="string">&quot;TARGET&quot;</span>).<span class="ident">map</span>(<span class="op">|</span><span class="ident">target</span><span class="op">|</span> <span class="ident">target</span>.<span class="ident">parse</span>::<span class="op">&lt;</span><span class="ident">Triple</span><span class="op">&gt;</span>()) {
+                <span class="ident">default_lib_name_for_target</span>(<span class="ident">version</span>, <span class="ident">implementation</span>, <span class="ident">abi3</span>, <span class="kw-2">&amp;</span><span class="ident">target</span>)
+            } <span class="kw">else</span> {
+                <span class="prelude-val">None</span>
+            }
+        });
 
         <span class="prelude-val">Ok</span>(<span class="ident">InterpreterConfig</span> {
             <span class="ident">implementation</span>,
@@ -2868,6 +3066,25 @@ print(&quot;mingw&quot;, get_platform().startswith(&quot;mingw&quot;))
             <span class="ident">suppress_build_script_link_lines</span>: <span class="ident">suppress_build_script_link_lines</span>.<span class="ident">unwrap_or</span>(<span class="bool-val">false</span>),
             <span class="ident">extra_build_script_lines</span>,
         })
+    }
+
+    <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;python3-dll-a&quot;</span>)]</span>
+    <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">clippy::unnecessary_wraps</span>)]</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">generate_import_libs</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+        <span class="comment">// Auto generate python3.dll import libraries for Windows targets.</span>
+        <span class="kw">if</span> <span class="self">self</span>.<span class="ident">lib_dir</span>.<span class="ident">is_none</span>() {
+            <span class="kw">let</span> <span class="ident">target</span> <span class="op">=</span> <span class="ident">target_triple_from_env</span>();
+            <span class="kw">let</span> <span class="ident">py_version</span> <span class="op">=</span> <span class="kw">if</span> <span class="self">self</span>.<span class="ident">abi3</span> { <span class="prelude-val">None</span> } <span class="kw">else</span> { <span class="prelude-val">Some</span>(<span class="self">self</span>.<span class="ident">version</span>) };
+            <span class="self">self</span>.<span class="ident">lib_dir</span> <span class="op">=</span>
+                <span class="ident">import_lib::generate_import_lib</span>(<span class="kw-2">&amp;</span><span class="ident">target</span>, <span class="self">self</span>.<span class="ident">implementation</span>, <span class="ident">py_version</span>)<span class="question-mark">?</span>;
+        }
+        <span class="prelude-val">Ok</span>(())
+    }
+
+    <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">not</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;python3-dll-a&quot;</span>))]</span>
+    <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">clippy::unnecessary_wraps</span>)]</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">generate_import_libs</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+        <span class="prelude-val">Ok</span>(())
     }
 
     <span class="attribute">#[<span class="ident">doc</span>(<span class="ident">hidden</span>)]</span>
@@ -2885,11 +3102,7 @@ print(&quot;mingw&quot;, get_platform().startswith(&quot;mingw&quot;))
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">buf</span> <span class="op">=</span> <span class="ident">Vec::new</span>();
         <span class="self">self</span>.<span class="ident">to_writer</span>(<span class="kw-2">&amp;mut</span> <span class="ident">buf</span>)<span class="question-mark">?</span>;
         <span class="comment">// escape newlines in env var</span>
-        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="ident">config</span>) <span class="op">=</span> <span class="ident">str::from_utf8</span>(<span class="kw-2">&amp;</span><span class="ident">buf</span>) {
-            <span class="macro">println!</span>(<span class="string">&quot;cargo:PYO3_CONFIG={}&quot;</span>, <span class="ident">config</span>.<span class="ident">replace</span>(<span class="string">&#39;\n&#39;</span>, <span class="string">&quot;\\n&quot;</span>));
-        } <span class="kw">else</span> {
-            <span class="macro">bail!</span>(<span class="string">&quot;unable to emit interpreter config to link env for downstream use&quot;</span>);
-        }
+        <span class="macro">println!</span>(<span class="string">&quot;cargo:PYO3_CONFIG={}&quot;</span>, <span class="ident">escape</span>(<span class="kw-2">&amp;</span><span class="ident">buf</span>));
         <span class="prelude-val">Ok</span>(())
     }
 
@@ -3026,7 +3239,7 @@ print(&quot;mingw&quot;, get_platform().startswith(&quot;mingw&quot;))
     }
 }
 
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Copy</span>, <span class="ident">Clone</span>, <span class="ident">PartialEq</span>)]</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Copy</span>, <span class="ident">Clone</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>)]</span>
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">PythonImplementation</span> {
     <span class="ident">CPython</span>,
     <span class="ident">PyPy</span>,
@@ -3103,14 +3316,14 @@ print(&quot;mingw&quot;, get_platform().startswith(&quot;mingw&quot;))
 
 <span class="doccomment">/// Checks if we need to link to `libpython` for the current build target.</span>
 <span class="doccomment">///</span>
-<span class="doccomment">/// Must be called from a crate PyO3 build script.</span>
+<span class="doccomment">/// Must be called from a PyO3 crate build script.</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_linking_libpython</span>() -&gt; <span class="ident">bool</span> {
     <span class="ident">is_linking_libpython_for_target</span>(<span class="kw-2">&amp;</span><span class="ident">target_triple_from_env</span>())
 }
 
 <span class="doccomment">/// Checks if we need to link to `libpython` for the target.</span>
 <span class="doccomment">///</span>
-<span class="doccomment">/// Must be called from a crate PyO3 build script.</span>
+<span class="doccomment">/// Must be called from a PyO3 crate build script.</span>
 <span class="kw">fn</span> <span class="ident">is_linking_libpython_for_target</span>(<span class="ident">target</span>: <span class="kw-2">&amp;</span><span class="ident">Triple</span>) -&gt; <span class="ident">bool</span> {
     <span class="ident">target</span>.<span class="ident">operating_system</span> <span class="op">==</span> <span class="ident">OperatingSystem::Windows</span>
         <span class="op">|</span><span class="op">|</span> <span class="ident">target</span>.<span class="ident">environment</span> <span class="op">==</span> <span class="ident">Environment::Android</span>
@@ -3118,11 +3331,23 @@ print(&quot;mingw&quot;, get_platform().startswith(&quot;mingw&quot;))
         <span class="op">|</span><span class="op">|</span> <span class="op">!</span><span class="ident">is_extension_module</span>()
 }
 
+<span class="doccomment">/// Checks if we need to discover the Python library directory</span>
+<span class="doccomment">/// to link the extension module binary.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// Must be called from a PyO3 crate build script.</span>
+<span class="kw">fn</span> <span class="ident">require_libdir_for_target</span>(<span class="ident">target</span>: <span class="kw-2">&amp;</span><span class="ident">Triple</span>) -&gt; <span class="ident">bool</span> {
+    <span class="kw">let</span> <span class="ident">is_generating_libpython</span> <span class="op">=</span> <span class="macro">cfg!</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;python3-dll-a&quot;</span>)
+        <span class="op">&amp;&amp;</span> <span class="ident">target</span>.<span class="ident">operating_system</span> <span class="op">==</span> <span class="ident">OperatingSystem::Windows</span>
+        <span class="op">&amp;&amp;</span> <span class="ident">is_abi3</span>();
+
+    <span class="ident">is_linking_libpython_for_target</span>(<span class="ident">target</span>) <span class="op">&amp;&amp;</span> <span class="op">!</span><span class="ident">is_generating_libpython</span>
+}
+
 <span class="doccomment">/// Configuration needed by PyO3 to cross-compile for a target platform.</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// Usually this is collected from the environment (i.e. `PYO3_CROSS_*` and `CARGO_CFG_TARGET_*`)</span>
 <span class="doccomment">/// when a cross-compilation configuration is detected.</span>
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>)]</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">CrossCompileConfig</span> {
     <span class="doccomment">/// The directory containing the Python library to link against.</span>
     <span class="kw">pub</span> <span class="ident">lib_dir</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">PathBuf</span><span class="op">&gt;</span>,
@@ -3416,7 +3641,7 @@ print(&quot;mingw&quot;, get_platform().startswith(&quot;mingw&quot;))
 <span class="doccomment">/// is the equivalent of `#ifdef {varname}` in C.</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// see Misc/SpecialBuilds.txt in the python source for what these mean.</span>
-<span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">test</span>, <span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>))]</span>
+<span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">test</span>, <span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>))]</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Default</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">BuildFlags</span>(<span class="kw">pub</span> <span class="ident">HashSet</span><span class="op">&lt;</span><span class="ident">BuildFlag</span><span class="op">&gt;</span>);
 
@@ -3460,7 +3685,8 @@ print(&quot;mingw&quot;, get_platform().startswith(&quot;mingw&quot;))
         <span class="ident">script</span>.<span class="ident">push_str</span>(<span class="string">&quot;config = sysconfig.get_config_vars()\n&quot;</span>);
 
         <span class="kw">for</span> <span class="ident">k</span> <span class="kw">in</span> <span class="kw-2">&amp;</span><span class="ident">BuildFlags::ALL</span> {
-            <span class="ident">script</span>.<span class="ident">push_str</span>(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;print(config.get(&#39;{}&#39;, &#39;0&#39;))\n&quot;</span>, <span class="ident">k</span>));
+            <span class="kw">use</span> <span class="ident">std::fmt::Write</span>;
+            <span class="macro">writeln!</span>(<span class="kw-2">&amp;mut</span> <span class="ident">script</span>, <span class="string">&quot;print(config.get(&#39;{}&#39;, &#39;0&#39;))&quot;</span>, <span class="ident">k</span>).<span class="ident">unwrap</span>();
         }
 
         <span class="kw">let</span> <span class="ident">stdout</span> <span class="op">=</span> <span class="ident">run_python_script</span>(<span class="ident">interpreter</span>.<span class="ident">as_ref</span>(), <span class="kw-2">&amp;</span><span class="ident">script</span>)<span class="question-mark">?</span>;
@@ -3609,7 +3835,8 @@ for key, val in build_time_vars.items():
             sysconfigdata files found:&quot;</span>,
         );
         <span class="kw">for</span> <span class="ident">path</span> <span class="kw">in</span> <span class="ident">sysconfig_paths</span> {
-            <span class="ident">error_msg</span> <span class="op">+</span><span class="op">=</span> <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;\n\t{}&quot;</span>, <span class="ident">path</span>.<span class="ident">display</span>());
+            <span class="kw">use</span> <span class="ident">std::fmt::Write</span>;
+            <span class="macro">write!</span>(<span class="kw-2">&amp;mut</span> <span class="ident">error_msg</span>, <span class="string">&quot;\n\t{}&quot;</span>, <span class="ident">path</span>.<span class="ident">display</span>()).<span class="ident">unwrap</span>();
         }
         <span class="macro">bail!</span>(<span class="string">&quot;{}\n&quot;</span>, <span class="ident">error_msg</span>);
     }
@@ -3781,6 +4008,7 @@ for key, val in build_time_vars.items():
 <span class="doccomment">/// Windows, macOS and Linux.</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// Must be called from a PyO3 crate build script.</span>
+<span class="attribute">#[<span class="ident">allow</span>(<span class="ident">unused_mut</span>)]</span>
 <span class="kw">fn</span> <span class="ident">default_cross_compile</span>(<span class="ident">cross_compile_config</span>: <span class="kw-2">&amp;</span><span class="ident">CrossCompileConfig</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">InterpreterConfig</span><span class="op">&gt;</span> {
     <span class="kw">let</span> <span class="ident">version</span> <span class="op">=</span> <span class="ident">cross_compile_config</span>
         .<span class="ident">version</span>
@@ -3795,22 +4023,23 @@ for key, val in build_time_vars.items():
         .<span class="ident">implementation</span>
         .<span class="ident">unwrap_or</span>(<span class="ident">PythonImplementation::CPython</span>);
 
-    <span class="kw">let</span> <span class="ident">lib_name</span> <span class="op">=</span> <span class="kw">if</span> <span class="ident">cross_compile_config</span>.<span class="ident">target</span>.<span class="ident">operating_system</span> <span class="op">==</span> <span class="ident">OperatingSystem::Windows</span> {
-        <span class="kw">let</span> <span class="ident">mingw</span> <span class="op">=</span> <span class="ident">cross_compile_config</span>.<span class="ident">target</span>.<span class="ident">environment</span> <span class="op">==</span> <span class="ident">Environment::Gnu</span>;
+    <span class="kw">let</span> <span class="ident">lib_name</span> <span class="op">=</span>
+        <span class="ident">default_lib_name_for_target</span>(<span class="ident">version</span>, <span class="ident">implementation</span>, <span class="ident">abi3</span>, <span class="kw-2">&amp;</span><span class="ident">cross_compile_config</span>.<span class="ident">target</span>);
 
-        <span class="prelude-val">Some</span>(<span class="ident">default_lib_name_windows</span>(
-            <span class="ident">version</span>,
-            <span class="ident">implementation</span>,
-            <span class="ident">abi3</span>,
-            <span class="ident">mingw</span>,
-        ))
-    } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">is_linking_libpython_for_target</span>(<span class="kw-2">&amp;</span><span class="ident">cross_compile_config</span>.<span class="ident">target</span>) {
-        <span class="prelude-val">Some</span>(<span class="ident">default_lib_name_unix</span>(<span class="ident">version</span>, <span class="ident">implementation</span>, <span class="prelude-val">None</span>))
-    } <span class="kw">else</span> {
-        <span class="prelude-val">None</span>
-    };
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">lib_dir</span> <span class="op">=</span> <span class="ident">cross_compile_config</span>.<span class="ident">lib_dir_string</span>();
 
-    <span class="kw">let</span> <span class="ident">lib_dir</span> <span class="op">=</span> <span class="ident">cross_compile_config</span>.<span class="ident">lib_dir_string</span>();
+    <span class="comment">// Auto generate python3.dll import libraries for Windows targets.</span>
+    <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;python3-dll-a&quot;</span>)]</span>
+    <span class="kw">if</span> <span class="ident">lib_dir</span>.<span class="ident">is_none</span>() {
+        <span class="kw">let</span> <span class="ident">py_version</span> <span class="op">=</span> <span class="kw">if</span> <span class="ident">abi3</span> { <span class="prelude-val">None</span> } <span class="kw">else</span> { <span class="prelude-val">Some</span>(<span class="ident">version</span>) };
+        <span class="ident">lib_dir</span> <span class="op">=</span> <span class="ident"><span class="self">self</span>::import_lib::generate_import_lib</span>(
+            <span class="kw-2">&amp;</span><span class="ident">cross_compile_config</span>.<span class="ident">target</span>,
+            <span class="ident">cross_compile_config</span>
+                .<span class="ident">implementation</span>
+                .<span class="ident">unwrap_or</span>(<span class="ident">PythonImplementation::CPython</span>),
+            <span class="ident">py_version</span>,
+        )<span class="question-mark">?</span>;
+    }
 
     <span class="prelude-val">Ok</span>(<span class="ident">InterpreterConfig</span> {
         <span class="ident">implementation</span>,
@@ -3910,6 +4139,26 @@ for key, val in build_time_vars.items():
 <span class="comment">// This contains only the limited ABI symbols.</span>
 <span class="kw">const</span> <span class="ident">WINDOWS_ABI3_LIB_NAME</span>: <span class="kw-2">&amp;</span><span class="ident">str</span> <span class="op">=</span> <span class="string">&quot;python3&quot;</span>;
 
+<span class="kw">fn</span> <span class="ident">default_lib_name_for_target</span>(
+    <span class="ident">version</span>: <span class="ident">PythonVersion</span>,
+    <span class="ident">implementation</span>: <span class="ident">PythonImplementation</span>,
+    <span class="ident">abi3</span>: <span class="ident">bool</span>,
+    <span class="ident">target</span>: <span class="kw-2">&amp;</span><span class="ident">Triple</span>,
+) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span> {
+    <span class="kw">if</span> <span class="ident">target</span>.<span class="ident">operating_system</span> <span class="op">==</span> <span class="ident">OperatingSystem::Windows</span> {
+        <span class="prelude-val">Some</span>(<span class="ident">default_lib_name_windows</span>(
+            <span class="ident">version</span>,
+            <span class="ident">implementation</span>,
+            <span class="ident">abi3</span>,
+            <span class="bool-val">false</span>,
+        ))
+    } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">is_linking_libpython_for_target</span>(<span class="ident">target</span>) {
+        <span class="prelude-val">Some</span>(<span class="ident">default_lib_name_unix</span>(<span class="ident">version</span>, <span class="ident">implementation</span>, <span class="prelude-val">None</span>))
+    } <span class="kw">else</span> {
+        <span class="prelude-val">None</span>
+    }
+}
+
 <span class="kw">fn</span> <span class="ident">default_lib_name_windows</span>(
     <span class="ident">version</span>: <span class="ident">PythonVersion</span>,
     <span class="ident">implementation</span>: <span class="ident">PythonImplementation</span>,
@@ -3934,7 +4183,15 @@ for key, val in build_time_vars.items():
     <span class="kw">match</span> <span class="ident">implementation</span> {
         <span class="ident">PythonImplementation::CPython</span> =&gt; <span class="kw">match</span> <span class="ident">ld_version</span> {
             <span class="prelude-val">Some</span>(<span class="ident">ld_version</span>) =&gt; <span class="macro">format!</span>(<span class="string">&quot;python{}&quot;</span>, <span class="ident">ld_version</span>),
-            <span class="prelude-val">None</span> =&gt; <span class="macro">format!</span>(<span class="string">&quot;python{}.{}&quot;</span>, <span class="ident">version</span>.<span class="ident">major</span>, <span class="ident">version</span>.<span class="ident">minor</span>),
+            <span class="prelude-val">None</span> =&gt; {
+                <span class="kw">if</span> <span class="ident">version</span> <span class="op">&gt;</span> <span class="ident">PythonVersion::PY37</span> {
+                    <span class="comment">// PEP 3149 ABI version tags are finally gone</span>
+                    <span class="macro">format!</span>(<span class="string">&quot;python{}.{}&quot;</span>, <span class="ident">version</span>.<span class="ident">major</span>, <span class="ident">version</span>.<span class="ident">minor</span>)
+                } <span class="kw">else</span> {
+                    <span class="comment">// Work around https://bugs.python.org/issue36707</span>
+                    <span class="macro">format!</span>(<span class="string">&quot;python{}.{}m&quot;</span>, <span class="ident">version</span>.<span class="ident">major</span>, <span class="ident">version</span>.<span class="ident">minor</span>)
+                }
+            }
         },
         <span class="ident">PythonImplementation::PyPy</span> =&gt; {
             <span class="kw">if</span> <span class="ident">version</span> <span class="op">&gt;</span><span class="op">=</span> (<span class="ident">PythonVersion</span> { <span class="ident">major</span>: <span class="number">3</span>, <span class="ident">minor</span>: <span class="number">9</span> }) {
@@ -4052,6 +4309,18 @@ for key, val in build_time_vars.items():
     }
 }
 
+<span class="doccomment">/// Locates and extracts the build host Python interpreter configuration.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// Lowers the configured Python version to `abi3_version` if required.</span>
+<span class="kw">fn</span> <span class="ident">get_host_interpreter</span>(<span class="ident">abi3_version</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">PythonVersion</span><span class="op">&gt;</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">InterpreterConfig</span><span class="op">&gt;</span> {
+    <span class="kw">let</span> <span class="ident">interpreter_path</span> <span class="op">=</span> <span class="ident">find_interpreter</span>()<span class="question-mark">?</span>;
+
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">interpreter_config</span> <span class="op">=</span> <span class="ident">InterpreterConfig::from_interpreter</span>(<span class="ident">interpreter_path</span>)<span class="question-mark">?</span>;
+    <span class="ident">interpreter_config</span>.<span class="ident">fixup_for_abi3_version</span>(<span class="ident">abi3_version</span>)<span class="question-mark">?</span>;
+
+    <span class="prelude-val">Ok</span>(<span class="ident">interpreter_config</span>)
+}
+
 <span class="doccomment">/// Generates an interpreter config suitable for cross-compilation.</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// This must be called from PyO3&#39;s build script, because it relies on environment variables such as</span>
@@ -4070,25 +4339,89 @@ for key, val in build_time_vars.items():
 
 <span class="doccomment">/// Generates an interpreter config which will be hard-coded into the pyo3-build-config crate.</span>
 <span class="doccomment">/// Only used by `pyo3-build-config` build script.</span>
-<span class="attribute">#[<span class="ident">allow</span>(<span class="ident">dead_code</span>)]</span>
+<span class="attribute">#[<span class="ident">allow</span>(<span class="ident">dead_code</span>, <span class="ident">unused_mut</span>)]</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">make_interpreter_config</span>() -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">InterpreterConfig</span><span class="op">&gt;</span> {
+    <span class="kw">let</span> <span class="ident">host</span> <span class="op">=</span> <span class="ident">Triple::host</span>();
     <span class="kw">let</span> <span class="ident">abi3_version</span> <span class="op">=</span> <span class="ident">get_abi3_version</span>();
 
+    <span class="comment">// See if we can safely skip the Python interpreter configuration detection.</span>
+    <span class="comment">// Unix &quot;abi3&quot; extension modules can usually be built without any interpreter.</span>
+    <span class="kw">let</span> <span class="ident">need_interpreter</span> <span class="op">=</span> <span class="ident">abi3_version</span>.<span class="ident">is_none</span>() <span class="op">|</span><span class="op">|</span> <span class="ident">require_libdir_for_target</span>(<span class="kw-2">&amp;</span><span class="ident">host</span>);
+
     <span class="kw">if</span> <span class="ident">have_python_interpreter</span>() {
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">interpreter_config</span> <span class="op">=</span> <span class="ident">InterpreterConfig::from_interpreter</span>(<span class="ident">find_interpreter</span>()<span class="question-mark">?</span>)<span class="question-mark">?</span>;
-        <span class="ident">interpreter_config</span>.<span class="ident">fixup_for_abi3_version</span>(<span class="ident">abi3_version</span>)<span class="question-mark">?</span>;
-        <span class="prelude-val">Ok</span>(<span class="ident">interpreter_config</span>)
-    } <span class="kw">else</span> <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">version</span>) <span class="op">=</span> <span class="ident">abi3_version</span> {
-        <span class="kw">let</span> <span class="ident">host</span> <span class="op">=</span> <span class="ident">Triple::host</span>();
-        <span class="prelude-val">Ok</span>(<span class="ident">default_abi3_config</span>(<span class="kw-2">&amp;</span><span class="ident">host</span>, <span class="ident">version</span>))
+        <span class="kw">match</span> <span class="ident">get_host_interpreter</span>(<span class="ident">abi3_version</span>) {
+            <span class="prelude-val">Ok</span>(<span class="ident">interpreter_config</span>) =&gt; <span class="kw">return</span> <span class="prelude-val">Ok</span>(<span class="ident">interpreter_config</span>),
+            <span class="comment">// Bail if the interpreter configuration is required to build.</span>
+            <span class="prelude-val">Err</span>(<span class="ident">e</span>) <span class="kw">if</span> <span class="ident">need_interpreter</span> =&gt; <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">e</span>),
+            <span class="kw">_</span> =&gt; {
+                <span class="comment">// Fall back to the &quot;abi3&quot; defaults just as if `PYO3_NO_PYTHON`</span>
+                <span class="comment">// environment variable was set.</span>
+                <span class="macro">warn!</span>(<span class="string">&quot;Compiling without a working Python interpreter.&quot;</span>);
+            }
+        }
     } <span class="kw">else</span> {
-        <span class="macro">bail!</span>(<span class="string">&quot;An abi3-py3* feature must be specified when compiling without a Python interpreter.&quot;</span>)
+        <span class="macro">ensure!</span>(
+            <span class="ident">abi3_version</span>.<span class="ident">is_some</span>(),
+            <span class="string">&quot;An abi3-py3* feature must be specified when compiling without a Python interpreter.&quot;</span>
+        );
+    };
+
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">interpreter_config</span> <span class="op">=</span> <span class="ident">default_abi3_config</span>(<span class="kw-2">&amp;</span><span class="ident">host</span>, <span class="ident">abi3_version</span>.<span class="ident">unwrap</span>());
+
+    <span class="comment">// Auto generate python3.dll import libraries for Windows targets.</span>
+    <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;python3-dll-a&quot;</span>)]</span>
+    {
+        <span class="kw">let</span> <span class="ident">py_version</span> <span class="op">=</span> <span class="kw">if</span> <span class="ident">interpreter_config</span>.<span class="ident">abi3</span> {
+            <span class="prelude-val">None</span>
+        } <span class="kw">else</span> {
+            <span class="prelude-val">Some</span>(<span class="ident">interpreter_config</span>.<span class="ident">version</span>)
+        };
+        <span class="ident">interpreter_config</span>.<span class="ident">lib_dir</span> <span class="op">=</span> <span class="ident"><span class="self">self</span>::import_lib::generate_import_lib</span>(
+            <span class="kw-2">&amp;</span><span class="ident">host</span>,
+            <span class="ident">interpreter_config</span>.<span class="ident">implementation</span>,
+            <span class="ident">py_version</span>,
+        )<span class="question-mark">?</span>;
     }
+
+    <span class="prelude-val">Ok</span>(<span class="ident">interpreter_config</span>)
+}
+
+<span class="kw">fn</span> <span class="ident">escape</span>(<span class="ident">bytes</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) -&gt; <span class="ident">String</span> {
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">escaped</span> <span class="op">=</span> <span class="ident">String::with_capacity</span>(<span class="number">2</span> <span class="op">*</span> <span class="ident">bytes</span>.<span class="ident">len</span>());
+
+    <span class="kw">for</span> <span class="ident">byte</span> <span class="kw">in</span> <span class="ident">bytes</span> {
+        <span class="kw">const</span> <span class="ident">LUT</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>; <span class="number">16</span>] <span class="op">=</span> <span class="string">b&quot;0123456789abcdef&quot;</span>;
+
+        <span class="ident">escaped</span>.<span class="ident">push</span>(<span class="ident">LUT</span>[(<span class="ident">byte</span> <span class="op">&gt;</span><span class="op">&gt;</span> <span class="number">4</span>) <span class="kw">as</span> <span class="ident">usize</span>] <span class="kw">as</span> <span class="ident">char</span>);
+        <span class="ident">escaped</span>.<span class="ident">push</span>(<span class="ident">LUT</span>[(<span class="ident">byte</span> <span class="op">&amp;</span> <span class="number">0x0F</span>) <span class="kw">as</span> <span class="ident">usize</span>] <span class="kw">as</span> <span class="ident">char</span>);
+    }
+
+    <span class="ident">escaped</span>
+}
+
+<span class="kw">fn</span> <span class="ident">unescape</span>(<span class="ident">escaped</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) -&gt; <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span> {
+    <span class="macro">assert!</span>(<span class="ident">escaped</span>.<span class="ident">len</span>() <span class="op">%</span> <span class="number">2</span> <span class="op">==</span> <span class="number">0</span>, <span class="string">&quot;invalid hex encoding&quot;</span>);
+
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">bytes</span> <span class="op">=</span> <span class="ident">Vec::with_capacity</span>(<span class="ident">escaped</span>.<span class="ident">len</span>() <span class="op">/</span> <span class="number">2</span>);
+
+    <span class="kw">for</span> <span class="ident">chunk</span> <span class="kw">in</span> <span class="ident">escaped</span>.<span class="ident">as_bytes</span>().<span class="ident">chunks_exact</span>(<span class="number">2</span>) {
+        <span class="kw">fn</span> <span class="ident">unhex</span>(<span class="ident">hex</span>: <span class="ident">u8</span>) -&gt; <span class="ident">u8</span> {
+            <span class="kw">match</span> <span class="ident">hex</span> {
+                <span class="string">b&#39;a&#39;</span>..<span class="op">=</span><span class="string">b&#39;f&#39;</span> =&gt; <span class="ident">hex</span> <span class="op">-</span> <span class="string">b&#39;a&#39;</span> <span class="op">+</span> <span class="number">10</span>,
+                <span class="string">b&#39;0&#39;</span>..<span class="op">=</span><span class="string">b&#39;9&#39;</span> =&gt; <span class="ident">hex</span> <span class="op">-</span> <span class="string">b&#39;0&#39;</span>,
+                <span class="kw">_</span> =&gt; <span class="macro">panic!</span>(<span class="string">&quot;invalid hex encoding&quot;</span>),
+            }
+        }
+
+        <span class="ident">bytes</span>.<span class="ident">push</span>(<span class="ident">unhex</span>(<span class="ident">chunk</span>[<span class="number">0</span>]) <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">4</span> <span class="op">|</span> <span class="ident">unhex</span>(<span class="ident">chunk</span>[<span class="number">1</span>]));
+    }
+
+    <span class="ident">bytes</span>
 }
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
 <span class="kw">mod</span> <span class="ident">tests</span> {
-    <span class="kw">use</span> <span class="ident">std</span>::{<span class="ident">io::Cursor</span>, <span class="ident">iter::FromIterator</span>};
+    <span class="kw">use</span> <span class="ident">std::iter::FromIterator</span>;
     <span class="kw">use</span> <span class="ident">target_lexicon::triple</span>;
 
     <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
@@ -4111,10 +4444,7 @@ for key, val in build_time_vars.items():
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">buf</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">Vec::new</span>();
         <span class="ident">config</span>.<span class="ident">to_writer</span>(<span class="kw-2">&amp;mut</span> <span class="ident">buf</span>).<span class="ident">unwrap</span>();
 
-        <span class="macro">assert_eq!</span>(
-            <span class="ident">config</span>,
-            <span class="ident">InterpreterConfig::from_reader</span>(<span class="ident">Cursor::new</span>(<span class="ident">buf</span>)).<span class="ident">unwrap</span>()
-        );
+        <span class="macro">assert_eq!</span>(<span class="ident">config</span>, <span class="ident">InterpreterConfig::from_reader</span>(<span class="kw-2">&amp;</span><span class="kw-2">*</span><span class="ident">buf</span>).<span class="ident">unwrap</span>());
 
         <span class="comment">// And some different options, for variety</span>
 
@@ -4142,17 +4472,37 @@ for key, val in build_time_vars.items():
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">buf</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">Vec::new</span>();
         <span class="ident">config</span>.<span class="ident">to_writer</span>(<span class="kw-2">&amp;mut</span> <span class="ident">buf</span>).<span class="ident">unwrap</span>();
 
-        <span class="macro">assert_eq!</span>(
-            <span class="ident">config</span>,
-            <span class="ident">InterpreterConfig::from_reader</span>(<span class="ident">Cursor::new</span>(<span class="ident">buf</span>)).<span class="ident">unwrap</span>()
-        );
+        <span class="macro">assert_eq!</span>(<span class="ident">config</span>, <span class="ident">InterpreterConfig::from_reader</span>(<span class="kw-2">&amp;</span><span class="kw-2">*</span><span class="ident">buf</span>).<span class="ident">unwrap</span>());
+    }
+
+    <span class="attribute">#[<span class="ident">test</span>]</span>
+    <span class="kw">fn</span> <span class="ident">test_config_file_roundtrip_with_escaping</span>() {
+        <span class="kw">let</span> <span class="ident">config</span> <span class="op">=</span> <span class="ident">InterpreterConfig</span> {
+            <span class="ident">abi3</span>: <span class="bool-val">true</span>,
+            <span class="ident">build_flags</span>: <span class="ident">BuildFlags::default</span>(),
+            <span class="ident">pointer_width</span>: <span class="prelude-val">Some</span>(<span class="number">32</span>),
+            <span class="ident">executable</span>: <span class="prelude-val">Some</span>(<span class="string">&quot;executable&quot;</span>.<span class="ident">into</span>()),
+            <span class="ident">implementation</span>: <span class="ident">PythonImplementation::CPython</span>,
+            <span class="ident">lib_name</span>: <span class="prelude-val">Some</span>(<span class="string">&quot;lib_name&quot;</span>.<span class="ident">into</span>()),
+            <span class="ident">lib_dir</span>: <span class="prelude-val">Some</span>(<span class="string">&quot;lib_dir\\n&quot;</span>.<span class="ident">into</span>()),
+            <span class="ident">shared</span>: <span class="bool-val">true</span>,
+            <span class="ident">version</span>: <span class="ident">MINIMUM_SUPPORTED_VERSION</span>,
+            <span class="ident">suppress_build_script_link_lines</span>: <span class="bool-val">true</span>,
+            <span class="ident">extra_build_script_lines</span>: <span class="macro">vec!</span>[<span class="string">&quot;cargo:test1&quot;</span>.<span class="ident">to_string</span>(), <span class="string">&quot;cargo:test2&quot;</span>.<span class="ident">to_string</span>()],
+        };
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">buf</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">Vec::new</span>();
+        <span class="ident">config</span>.<span class="ident">to_writer</span>(<span class="kw-2">&amp;mut</span> <span class="ident">buf</span>).<span class="ident">unwrap</span>();
+
+        <span class="kw">let</span> <span class="ident">buf</span> <span class="op">=</span> <span class="ident">unescape</span>(<span class="kw-2">&amp;</span><span class="ident">escape</span>(<span class="kw-2">&amp;</span><span class="ident">buf</span>));
+
+        <span class="macro">assert_eq!</span>(<span class="ident">config</span>, <span class="ident">InterpreterConfig::from_reader</span>(<span class="kw-2">&amp;</span><span class="kw-2">*</span><span class="ident">buf</span>).<span class="ident">unwrap</span>());
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">test_config_file_defaults</span>() {
         <span class="comment">// Only version is required</span>
         <span class="macro">assert_eq!</span>(
-            <span class="ident">InterpreterConfig::from_reader</span>(<span class="ident">Cursor::new</span>(<span class="string">&quot;version=3.7&quot;</span>)).<span class="ident">unwrap</span>(),
+            <span class="ident">InterpreterConfig::from_reader</span>(<span class="string">&quot;version=3.7&quot;</span>.<span class="ident">as_bytes</span>()).<span class="ident">unwrap</span>(),
             <span class="ident">InterpreterConfig</span> {
                 <span class="ident">version</span>: <span class="ident">PythonVersion</span> { <span class="ident">major</span>: <span class="number">3</span>, <span class="ident">minor</span>: <span class="number">7</span> },
                 <span class="ident">implementation</span>: <span class="ident">PythonImplementation::CPython</span>,
@@ -4437,7 +4787,7 @@ for key, val in build_time_vars.items():
                 <span class="ident">version</span>: <span class="ident">PythonVersion</span> { <span class="ident">major</span>: <span class="number">3</span>, <span class="ident">minor</span>: <span class="number">8</span> },
                 <span class="ident">shared</span>: <span class="bool-val">true</span>,
                 <span class="ident">abi3</span>: <span class="bool-val">false</span>,
-                <span class="ident">lib_name</span>: <span class="prelude-val">Some</span>(<span class="string">&quot;python3.8&quot;</span>.<span class="ident">into</span>()),
+                <span class="ident">lib_name</span>: <span class="prelude-val">Some</span>(<span class="string">&quot;python38&quot;</span>.<span class="ident">into</span>()),
                 <span class="ident">lib_dir</span>: <span class="prelude-val">Some</span>(<span class="string">&quot;/usr/lib/mingw&quot;</span>.<span class="ident">into</span>()),
                 <span class="ident">executable</span>: <span class="prelude-val">None</span>,
                 <span class="ident">pointer_width</span>: <span class="prelude-val">None</span>,
@@ -4571,10 +4921,15 @@ for key, val in build_time_vars.items():
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">default_lib_name_unix</span>() {
         <span class="kw">use</span> <span class="ident">PythonImplementation</span>::<span class="kw-2">*</span>;
-        <span class="comment">// Defaults to pythonX.Y for CPython</span>
+        <span class="comment">// Defaults to python3.7m for CPython 3.7</span>
         <span class="macro">assert_eq!</span>(
             <span class="ident"><span class="kw">super</span>::default_lib_name_unix</span>(<span class="ident">PythonVersion</span> { <span class="ident">major</span>: <span class="number">3</span>, <span class="ident">minor</span>: <span class="number">7</span> }, <span class="ident">CPython</span>, <span class="prelude-val">None</span>),
-            <span class="string">&quot;python3.7&quot;</span>,
+            <span class="string">&quot;python3.7m&quot;</span>,
+        );
+        <span class="comment">// Defaults to pythonX.Y for CPython 3.8+</span>
+        <span class="macro">assert_eq!</span>(
+            <span class="ident"><span class="kw">super</span>::default_lib_name_unix</span>(<span class="ident">PythonVersion</span> { <span class="ident">major</span>: <span class="number">3</span>, <span class="ident">minor</span>: <span class="number">8</span> }, <span class="ident">CPython</span>, <span class="prelude-val">None</span>),
+            <span class="string">&quot;python3.8&quot;</span>,
         );
         <span class="macro">assert_eq!</span>(
             <span class="ident"><span class="kw">super</span>::default_lib_name_unix</span>(<span class="ident">PythonVersion</span> { <span class="ident">major</span>: <span class="number">3</span>, <span class="ident">minor</span>: <span class="number">9</span> }, <span class="ident">CPython</span>, <span class="prelude-val">None</span>),
@@ -4852,5 +5207,4 @@ for key, val in build_time_vars.items():
     }
 }
 </code></pre></div>
-</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="pyo3_build_config" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.62.0-nightly (e745b4ddb 2022-04-07)" ></div>
-</body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="pyo3_build_config" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.65.0-nightly (f03ce3096 2022-08-08)" ></div></body></html>
