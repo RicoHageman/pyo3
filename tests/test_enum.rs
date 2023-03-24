@@ -72,10 +72,28 @@ fn test_enum_eq_incomparable() {
     })
 }
 
+#[test]
+fn test_enum_compare_by_identity() {
+    Python::with_gil(|py| {
+        #[allow(non_snake_case)]
+        let MyEnum = py.get_type::<MyEnum>();
+        py_run!(
+            py,
+            MyEnum,
+            r#"
+        assert MyEnum.Variant is MyEnum.Variant
+        assert MyEnum.Variant is not MyEnum.OtherVariant
+        assert (MyEnum.Variant is not MyEnum.Variant) == False
+        "#
+        );
+    })
+}
+
 #[pyclass]
 enum CustomDiscriminant {
     One = 1,
     Two = 2,
+    Four = 4,
 }
 
 #[test]
@@ -90,6 +108,25 @@ fn test_custom_discriminant() {
         assert CustomDiscriminant.Two == two
         assert one != two
         "#);
+    })
+}
+
+#[test]
+fn test_custom_discriminant_comparison_by_identity() {
+    Python::with_gil(|py| {
+        #[allow(non_snake_case)]
+        let CustomDiscriminant = py.get_type::<CustomDiscriminant>();
+        py_run!(
+            py,
+            CustomDiscriminant,
+            r#"
+        assert CustomDiscriminant.One is CustomDiscriminant.One
+        assert CustomDiscriminant.Two is CustomDiscriminant.Two
+        assert CustomDiscriminant.Four is CustomDiscriminant.Four
+        assert CustomDiscriminant.One is not CustomDiscriminant.Two
+        assert CustomDiscriminant.Two is not CustomDiscriminant.Four
+        "#
+        );
     })
 }
 
