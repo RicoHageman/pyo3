@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1678894734909,
+  "lastUpdate": 1679665016878,
   "repoUrl": "https://github.com/ricohageman/pyo3",
   "entries": {
     "pyo3-bench": [
@@ -55631,6 +55631,216 @@ window.BENCHMARK_DATA = {
             "name": "sequence_from_tuple",
             "value": 2,
             "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "26634292+bors[bot]@users.noreply.github.com",
+            "name": "bors[bot]",
+            "username": "bors[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "e5e8c7a6d019fcaec47de248d8cd53e0c97762f9",
+          "message": "Merge #2975 #3022 #3023\n\n2975: RFC: Add GILProtected synchronization primitive and use it for LazyTypeObjectInner. r=davidhewitt a=adamreichold\n\nI would also like to use that type in rust-numpy and it seems we can avoid ~~both a manual unsafe impl and~~ a full blown mutex if we apply it to `LazyTypeObjectInner`.\r\n\r\nOne downside might be that it ties us closer to the GIL when we want to enable nogil experimentation, but on the other hand, it may also help by reifying the GIL usage. (This is currently limited to comments in unsafe code in rust-numpy for example.)\n\n3022: Fix function name shadowing r=davidhewitt a=mejrs\n\nFixes https://github.com/PyO3/pyo3/issues/3017\n\n3023: Emit a better error for bad argument names r=davidhewitt a=mejrs\n\nThis will emit a better error for code like \r\n```rust\r\n#[pyfunction]\r\nfn output([a,b,c]: [u8;3]) {}\r\n```\r\n\r\n\n\nCo-authored-by: Adam Reichold <adam.reichold@t-online.de>\nCo-authored-by: mejrs <59372212+mejrs@users.noreply.github.com>",
+          "timestamp": "2023-03-23T08:04:11Z",
+          "tree_id": "31299fc07801fbc77982a2d4b12fc9fd629e0ae7",
+          "url": "https://github.com/ricohageman/pyo3/commit/e5e8c7a6d019fcaec47de248d8cd53e0c97762f9"
+        },
+        "date": 1679664964762,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "call_0",
+            "value": 62177,
+            "range": "± 2808",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "call_method_0",
+            "value": 168860,
+            "range": "± 9517",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "iter_dict",
+            "value": 3449055,
+            "range": "± 143893",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dict_new",
+            "value": 5211897,
+            "range": "± 199388",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dict_get_item",
+            "value": 3462527,
+            "range": "± 135335",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "extract_hashmap",
+            "value": 8986732,
+            "range": "± 478929",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "extract_btreemap",
+            "value": 14133068,
+            "range": "± 469484",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "extract_hashbrown_map",
+            "value": 7416815,
+            "range": "± 242188",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "mapping_from_dict",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "clean_gilpool_new",
+            "value": 22,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "clean_acquire_gil",
+            "value": 120,
+            "range": "± 4",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dirty_acquire_gil",
+            "value": 121,
+            "range": "± 5",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "iter_list",
+            "value": 2235564,
+            "range": "± 128895",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "list_new",
+            "value": 1510374,
+            "range": "± 164561",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "list_get_item",
+            "value": 1257988,
+            "range": "± 64400",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "list_get_item_unchecked",
+            "value": 1133357,
+            "range": "± 54437",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sequence_from_list",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "first_time_init",
+            "value": 3787,
+            "range": "± 155",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "drop_many_objects",
+            "value": 3669,
+            "range": "± 126",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "set_new",
+            "value": 2161460,
+            "range": "± 61830",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "iter_set",
+            "value": 2826988,
+            "range": "± 97153",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "extract_hashset",
+            "value": 9554247,
+            "range": "± 327898",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "extract_btreeset",
+            "value": 4877934,
+            "range": "± 183506",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "extract_hashbrown_set",
+            "value": 7073350,
+            "range": "± 283675",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "iter_tuple",
+            "value": 1470893,
+            "range": "± 52741",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "tuple_new",
+            "value": 1485474,
+            "range": "± 122430",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "tuple_get_item",
+            "value": 973523,
+            "range": "± 35075",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "tuple_get_item_unchecked",
+            "value": 835083,
+            "range": "± 34736",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sequence_from_tuple",
+            "value": 3,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "tuple_new_list",
+            "value": 249908,
+            "range": "± 7090",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "tuple_to_list",
+            "value": 164675,
+            "range": "± 4885",
             "unit": "ns/iter"
           }
         ]
