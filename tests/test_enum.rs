@@ -90,6 +90,37 @@ fn test_enum_compare_by_identity() {
 }
 
 #[pyclass]
+struct MyEnumHoldingStruct {
+    #[pyo3(get)]
+    my_enum: MyEnum,
+}
+
+#[pymethods]
+impl MyEnumHoldingStruct {
+    #[new]
+    fn new() -> Self {
+        Self {
+            my_enum: MyEnum::Variant,
+        }
+    }
+}
+
+#[test]
+fn test_struct_holding_enum_compare_enum_by_identity() {
+    Python::with_gil(|py| {
+        #[allow(non_snake_case)]
+        let MyEnum = py.get_type::<MyEnum>();
+        #[allow(non_snake_case)]
+        let MyEnumHoldingStruct = py.get_type::<MyEnumHoldingStruct>();
+        py_run!(py, MyEnumHoldingStruct MyEnum, r#"
+        my_enum_holding_struct = MyEnumHoldingStruct()
+        assert my_enum_holding_struct.my_enum is MyEnum.Variant
+        assert my_enum_holding_struct.my_enum is not MyEnum.OtherVariant
+        "#);
+    })
+}
+
+#[pyclass]
 enum CustomDiscriminant {
     One = 1,
     Two = 2,
