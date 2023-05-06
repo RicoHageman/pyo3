@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1683055732172,
+  "lastUpdate": 1683401457371,
   "repoUrl": "https://github.com/ricohageman/pyo3",
   "entries": {
     "pyo3-bench": [
@@ -60881,6 +60881,216 @@ window.BENCHMARK_DATA = {
             "name": "tuple_to_list",
             "value": 245896,
             "range": "± 12544",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "info@ricohageman.nl",
+            "name": "Rico Hageman",
+            "username": "ricohageman"
+          },
+          "committer": {
+            "email": "info@ricohageman.nl",
+            "name": "Rico Hageman",
+            "username": "ricohageman"
+          },
+          "distinct": true,
+          "id": "8ff97aa30013ede03a30b75d7294146e47e0c715",
+          "message": "Index into an array instead of hashmap",
+          "timestamp": "2023-05-06T21:17:56+02:00",
+          "tree_id": "adccbb500cb9e47d7e71fb5ecdf40d4ca7a0a195",
+          "url": "https://github.com/ricohageman/pyo3/commit/8ff97aa30013ede03a30b75d7294146e47e0c715"
+        },
+        "date": 1683401404854,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "call_0",
+            "value": 68952,
+            "range": "± 3245",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "call_method_0",
+            "value": 200774,
+            "range": "± 36382",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "iter_dict",
+            "value": 9688564,
+            "range": "± 496989",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dict_new",
+            "value": 6450877,
+            "range": "± 422828",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dict_get_item",
+            "value": 4342786,
+            "range": "± 265055",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "extract_hashmap",
+            "value": 13618771,
+            "range": "± 1280042",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "extract_btreemap",
+            "value": 21116230,
+            "range": "± 895351",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "extract_hashbrown_map",
+            "value": 12825522,
+            "range": "± 971641",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "mapping_from_dict",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "clean_gilpool_new",
+            "value": 22,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "clean_acquire_gil",
+            "value": 125,
+            "range": "± 4",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dirty_acquire_gil",
+            "value": 129,
+            "range": "± 6",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "iter_list",
+            "value": 2359155,
+            "range": "± 113921",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "list_new",
+            "value": 1515840,
+            "range": "± 195293",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "list_get_item",
+            "value": 1364000,
+            "range": "± 82978",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "list_get_item_unchecked",
+            "value": 1214704,
+            "range": "± 80599",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sequence_from_list",
+            "value": 3,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "first_time_init",
+            "value": 4529,
+            "range": "± 368",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "drop_many_objects",
+            "value": 4411,
+            "range": "± 205",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "set_new",
+            "value": 2268398,
+            "range": "± 94125",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "iter_set",
+            "value": 2922095,
+            "range": "± 129067",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "extract_hashset",
+            "value": 11937059,
+            "range": "± 568996",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "extract_btreeset",
+            "value": 5173568,
+            "range": "± 213915",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "extract_hashbrown_set",
+            "value": 8980604,
+            "range": "± 473341",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "iter_tuple",
+            "value": 1614757,
+            "range": "± 78085",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "tuple_new",
+            "value": 1542970,
+            "range": "± 166789",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "tuple_get_item",
+            "value": 1049265,
+            "range": "± 44916",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "tuple_get_item_unchecked",
+            "value": 937014,
+            "range": "± 40879",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sequence_from_tuple",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "tuple_new_list",
+            "value": 320120,
+            "range": "± 14952",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "tuple_to_list",
+            "value": 247064,
+            "range": "± 12227",
             "unit": "ns/iter"
           }
         ]
