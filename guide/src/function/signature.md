@@ -148,7 +148,7 @@ fn increment(x: u64, amount: Option<u64>) -> u64 {
 #             .extract()?;
 #
 #         #[cfg(Py_3_8)]  // on 3.7 the signature doesn't render b, upstream bug?
-#         assert_eq!(sig, "(x, amount=Ellipsis)");
+#         assert_eq!(sig, "(x, amount=None)");
 #
 #         Ok(())
 #     })
@@ -191,7 +191,7 @@ The `#[pyfunction]` macro can take the argument specification directly, but this
 
 The `#[pymethods]` macro has an `#[args]` attribute which accepts the deprecated form.
 
-Below are the same examples as above which using the deprecated syntax:
+Below are the same examples as above, but using the deprecated syntax:
 
 ```rust
 # #![allow(deprecated)]
@@ -272,9 +272,7 @@ impl MyClass {
 
 The function signature is exposed to Python via the `__text_signature__` attribute. PyO3 automatically generates this for every `#[pyfunction]` and all `#[pymethods]` directly from the Rust function, taking into account any override done with the `#[pyo3(signature = (...))]` option.
 
-This automatic generation has some limitations, which may be improved in the future:
-- It will not include the value of default arguments, replacing them all with `...`. (`.pyi` type stub files commonly also use `...` for all default arguments in the same way.)
-- Nothing is generated for the `#[new]` method of a `#[pyclass]`.
+This automatic generation can only display the value of default arguments for strings, integers, boolean types, and `None`. Any other default arguments will be displayed as `...`. (`.pyi` type stub files commonly also use `...` for default arguments in the same way.)
 
 In cases where the automatically-generated signature needs adjusting, it can [be overridden](#overriding-the-generated-signature) using the `#[pyo3(text_signature)]` option.)
 
@@ -304,7 +302,7 @@ fn add(a: u64, b: u64) -> u64 {
 #             .extract()?;
 #
 #         #[cfg(Py_3_8)]  // on 3.7 the signature doesn't render b, upstream bug?
-#         assert_eq!(sig, "(a, b=Ellipsis, /)");
+#         assert_eq!(sig, "(a, b=0, /)");
 #
 #         Ok(())
 #     })
@@ -317,7 +315,7 @@ The following IPython output demonstrates how this generated signature will be s
 >>> pyo3_test.add.__text_signature__
 '(a, b=..., /)'
 >>> pyo3_test.add?
-Signature: pyo3_test.add(a, b=Ellipsis, /)
+Signature: pyo3_test.add(a, b=0, /)
 Docstring: This function adds two unsigned 64-bit integers.
 Type:      builtin_function_or_method
 ```

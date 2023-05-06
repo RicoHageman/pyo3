@@ -42,7 +42,7 @@ fn wrap(obj: &PyAny) -> Result<i32, PyErr> {
     Ok(val as i32)
 }
 ```
-We also add documentation, via `///` comments and the `#[pyo3(text_signature = "...")]` attribute, both of which are visible to Python users.
+We also add documentation, via `///` comments, which are visible to Python users.
 
 ```rust
 # #![allow(dead_code)]
@@ -57,7 +57,6 @@ fn wrap(obj: &PyAny) -> Result<i32, PyErr> {
 /// Did you ever hear the tragedy of Darth Signed The Overfloweth? I thought not.
 /// It's not a story C would tell you. It's a Rust legend.
 #[pyclass(module = "my_module")]
-#[pyo3(text_signature = "(int)")]
 struct Number(i32);
 
 #[pymethods]
@@ -223,7 +222,6 @@ fn wrap(obj: &PyAny) -> Result<i32, PyErr> {
 /// Did you ever hear the tragedy of Darth Signed The Overfloweth? I thought not.
 /// It's not a story C would tell you. It's a Rust legend.
 #[pyclass(module = "my_module")]
-#[pyo3(text_signature = "(int)")]
 struct Number(i32);
 
 #[pymethods]
@@ -233,8 +231,10 @@ impl Number {
         Self(value)
     }
 
-    fn __repr__(&self) -> String {
-        format!("Number({})", self.0)
+    fn __repr__(slf: &PyCell<Self>) -> PyResult<String> {
+       // Get the class name dynamically in case `Number` is subclassed
+       let class_name: &str = slf.get_type().name()?;
+        Ok(format!("{}({})", class_name, slf.borrow().0))
     }
 
     fn __str__(&self) -> String {
@@ -375,7 +375,7 @@ fn my_module(_py: Python<'_>, m: &PyModule) -> PyResult<()> {
 # assert Number(12345234523452) == Number(1498514748)
 # try:
 #     import inspect
-#     assert inspect.signature(Number).__str__() == '(int)'
+#     assert inspect.signature(Number).__str__() == '(value)'
 # except ValueError:
 #     # Not supported with `abi3` before Python 3.10
 #     pass

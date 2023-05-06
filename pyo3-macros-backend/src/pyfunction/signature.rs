@@ -13,7 +13,7 @@ use syn::{
 use crate::{
     attributes::{kw, KeywordAttribute},
     deprecations::{Deprecation, Deprecations},
-    method::{FnArg, FnType},
+    method::FnArg,
     pyfunction::Argument,
 };
 
@@ -402,12 +402,12 @@ impl<'a> FunctionSignature<'a> {
                 SignatureItem::Varargs(varargs) => {
                     let fn_arg = next_non_py_argument_checked(&varargs.ident)?;
                     fn_arg.is_varargs = true;
-                    parse_state.add_varargs(&mut python_signature, &varargs)?;
+                    parse_state.add_varargs(&mut python_signature, varargs)?;
                 }
                 SignatureItem::Kwargs(kwargs) => {
                     let fn_arg = next_non_py_argument_checked(&kwargs.ident)?;
                     fn_arg.is_kwargs = true;
-                    parse_state.add_kwargs(&mut python_signature, &kwargs)?;
+                    parse_state.add_kwargs(&mut python_signature, kwargs)?;
                 }
                 SignatureItem::PosargsSep(sep) => {
                     parse_state.finish_pos_only_args(&mut python_signature, sep.span())?
@@ -585,18 +585,45 @@ impl<'a> FunctionSignature<'a> {
         }
     }
 
-    pub fn text_signature(&self, fn_type: &FnType) -> String {
-        // automatic text signature generation
-        let self_argument = match fn_type {
-            FnType::FnNew | FnType::Getter(_) | FnType::Setter(_) | FnType::ClassAttribute => {
-                unreachable!()
+    fn default_value_for_parameter(&self, parameter: &str) -> String {
+        let mut default = "...".to_string();
+        if let Some(fn_arg) = self.arguments.iter().find(|arg| arg.name == parameter) {
+            if let Some(arg_default) = fn_arg.default.as_ref() {
+                match arg_default {
+                    // literal values
+                    syn::Expr::Lit(syn::ExprLit { lit, .. }) => match lit {
+                        syn::Lit::Str(s) => default = s.token().to_string(),
+                        syn::Lit::Char(c) => default = c.token().to_string(),
+                        syn::Lit::Int(i) => default = i.base10_digits().to_string(),
+                        syn::Lit::Float(f) => default = f.base10_digits().to_string(),
+                        syn::Lit::Bool(b) => {
+                            default = if b.value() {
+                                "True".to_string()
+                            } else {
+                                "False".to_string()
+                            }
+                        }
+                        _ => {}
+                    },
+                    // None
+                    syn::Expr::Path(syn::ExprPath {
+                        qself: None, path, ..
+                    }) if path.is_ident("None") => {
+                        default = "None".to_string();
+                    }
+                    // others, unsupported yet so defaults to `...`
+                    _ => {}
+                }
+            } else if fn_arg.optional.is_some() {
+                // functions without a `#[pyo3(signature = (...))]` option
+                // will treat trailing `Option<T>` arguments as having a default of `None`
+                default = "None".to_string();
             }
-            FnType::Fn(_) => Some("self"),
-            FnType::FnModule => Some("module"),
-            FnType::FnClass => Some("cls"),
-            FnType::FnStatic => None,
-        };
+        }
+        default
+    }
 
+    pub fn text_signature(&self, self_argument: Option<&str>) -> String {
         let mut output = String::new();
         output.push('(');
 
@@ -624,8 +651,8 @@ impl<'a> FunctionSignature<'a> {
             output.push_str(parameter);
 
             if i >= py_sig.required_positional_parameters {
-                // has a default, just use ... for now
-                output.push_str("=...");
+                output.push('=');
+                output.push_str(&self.default_value_for_parameter(parameter));
             }
 
             if py_sig.positional_only_parameters > 0 && i + 1 == py_sig.positional_only_parameters {
@@ -646,8 +673,8 @@ impl<'a> FunctionSignature<'a> {
             maybe_push_comma(&mut output);
             output.push_str(parameter);
             if !required {
-                // has a default, just use ... for now
-                output.push_str("=...")
+                output.push('=');
+                output.push_str(&self.default_value_for_parameter(parameter));
             }
         }
 
