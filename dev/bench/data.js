@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1683401646997,
+  "lastUpdate": 1683401788490,
   "repoUrl": "https://github.com/ricohageman/pyo3",
   "entries": {
     "pyo3-bench": [
@@ -61301,6 +61301,216 @@ window.BENCHMARK_DATA = {
             "name": "tuple_to_list",
             "value": 223173,
             "range": "± 15578",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "info@ricohageman.nl",
+            "name": "Rico Hageman",
+            "username": "ricohageman"
+          },
+          "committer": {
+            "email": "info@ricohageman.nl",
+            "name": "Rico Hageman",
+            "username": "ricohageman"
+          },
+          "distinct": true,
+          "id": "82353cc23ba4dd5c0c43c2c17b2aba9fd3f0ff8e",
+          "message": "Ensure that the struct holding enum case is tested",
+          "timestamp": "2023-03-27T11:38:45+02:00",
+          "tree_id": "46eab5f0e2365859f87a7c042f747be22aae6e81",
+          "url": "https://github.com/ricohageman/pyo3/commit/82353cc23ba4dd5c0c43c2c17b2aba9fd3f0ff8e"
+        },
+        "date": 1683401740936,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "call_0",
+            "value": 52413,
+            "range": "± 1002",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "call_method_0",
+            "value": 153938,
+            "range": "± 6400",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "iter_dict",
+            "value": 2989015,
+            "range": "± 19841",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dict_new",
+            "value": 4211830,
+            "range": "± 95100",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dict_get_item",
+            "value": 2881287,
+            "range": "± 41190",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "extract_hashmap",
+            "value": 8570314,
+            "range": "± 173172",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "extract_btreemap",
+            "value": 13521317,
+            "range": "± 107944",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "extract_hashbrown_map",
+            "value": 7572408,
+            "range": "± 68836",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "mapping_from_dict",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "clean_gilpool_new",
+            "value": 16,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "clean_acquire_gil",
+            "value": 112,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dirty_acquire_gil",
+            "value": 119,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "iter_list",
+            "value": 2043399,
+            "range": "± 10048",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "list_new",
+            "value": 1215690,
+            "range": "± 114128",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "list_get_item",
+            "value": 1186354,
+            "range": "± 35405",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "list_get_item_unchecked",
+            "value": 1030732,
+            "range": "± 40882",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sequence_from_list",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "first_time_init",
+            "value": 3631,
+            "range": "± 56",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "drop_many_objects",
+            "value": 6302,
+            "range": "± 51",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "set_new",
+            "value": 1841527,
+            "range": "± 14426",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "iter_set",
+            "value": 2525921,
+            "range": "± 25098",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "extract_hashset",
+            "value": 9772674,
+            "range": "± 31321",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "extract_btreeset",
+            "value": 4026144,
+            "range": "± 16707",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "extract_hashbrown_set",
+            "value": 6991863,
+            "range": "± 26598",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "iter_tuple",
+            "value": 1578052,
+            "range": "± 6721",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "tuple_new",
+            "value": 1229018,
+            "range": "± 78038",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "tuple_get_item",
+            "value": 914434,
+            "range": "± 4566",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "tuple_get_item_unchecked",
+            "value": 872935,
+            "range": "± 9793",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sequence_from_tuple",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "tuple_new_list",
+            "value": 235623,
+            "range": "± 731",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "tuple_to_list",
+            "value": 153042,
+            "range": "± 336",
             "unit": "ns/iter"
           }
         ]
