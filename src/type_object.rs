@@ -47,34 +47,23 @@ pub unsafe trait PyTypeInfo: Sized {
     fn type_object_raw(py: Python<'_>) -> *mut ffi::PyTypeObject;
 
     /// Returns the safe abstraction over the type object.
+    #[inline]
     fn type_object(py: Python<'_>) -> &PyType {
         unsafe { py.from_borrowed_ptr(Self::type_object_raw(py) as _) }
     }
 
     /// Checks if `object` is an instance of this type or a subclass of this type.
+    #[inline]
     fn is_type_of(object: &PyAny) -> bool {
         unsafe { ffi::PyObject_TypeCheck(object.as_ptr(), Self::type_object_raw(object.py())) != 0 }
     }
 
     /// Checks if `object` is an instance of this type.
+    #[inline]
     fn is_exact_type_of(object: &PyAny) -> bool {
         unsafe { ffi::Py_TYPE(object.as_ptr()) == Self::type_object_raw(object.py()) }
     }
 }
-
-/// Legacy trait which previously held the `type_object` method now found on `PyTypeInfo`.
-///
-/// # Safety
-///
-/// This trait used to have stringent safety requirements, but they are now irrelevant as it is deprecated.
-#[deprecated(
-    since = "0.17.0",
-    note = "PyTypeObject::type_object was moved to PyTypeInfo::type_object"
-)]
-pub unsafe trait PyTypeObject: PyTypeInfo {}
-
-#[allow(deprecated)]
-unsafe impl<T: PyTypeInfo> PyTypeObject for T {}
 
 #[inline]
 pub(crate) unsafe fn get_tp_alloc(tp: *mut ffi::PyTypeObject) -> Option<ffi::allocfunc> {
@@ -102,25 +91,5 @@ pub(crate) unsafe fn get_tp_free(tp: *mut ffi::PyTypeObject) -> ffi::freefunc {
         let ptr = ffi::PyType_GetSlot(tp, ffi::Py_tp_free);
         debug_assert_ne!(ptr, std::ptr::null_mut());
         std::mem::transmute(ptr)
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    #[test]
-    #[allow(deprecated)]
-    fn test_deprecated_type_object() {
-        // Even though PyTypeObject is deprecated, simple usages of it as a trait bound should continue to work.
-        use super::PyTypeObject;
-        use crate::types::{PyList, PyType};
-        use crate::Python;
-
-        fn get_type_object<T: PyTypeObject>(py: Python<'_>) -> &PyType {
-            T::type_object(py)
-        }
-
-        Python::with_gil(|py| {
-            assert!(get_type_object::<PyList>(py).is(<PyList as crate::PyTypeInfo>::type_object(py)))
-        });
     }
 }

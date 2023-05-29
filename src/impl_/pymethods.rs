@@ -1,9 +1,15 @@
+use crate::gil::LockGIL;
+use crate::impl_::panic::PanicTrap;
 use crate::internal_tricks::extract_c_string;
-use crate::{ffi, IntoPy, Py, PyAny, PyErr, PyObject, PyResult, PyTraverseError, Python};
+use crate::{
+    ffi, IntoPy, Py, PyAny, PyCell, PyClass, PyErr, PyObject, PyResult, PyTraverseError, PyVisit,
+    Python,
+};
 use std::borrow::Cow;
 use std::ffi::CStr;
 use std::fmt;
-use std::os::raw::c_int;
+use std::os::raw::{c_int, c_void};
+use std::panic::{catch_unwind, AssertUnwindSafe};
 
 /// Python 3.8 and up - __ipow__ has modulo argument correctly populated.
 #[cfg(Py_3_8)]
@@ -39,7 +45,6 @@ impl IPowModulo {
 
 /// `PyMethodDefType` represents different types of Python callable objects.
 /// It is used by the `#[pymethods]` attribute.
-#[derive(Debug)]
 pub enum PyMethodDefType {
     /// Represents class method
     Class(PyMethodDef),
@@ -72,10 +77,10 @@ pub struct PyCFunctionWithKeywords(pub ffi::PyCFunctionWithKeywords);
 #[cfg(not(Py_LIMITED_API))]
 #[derive(Clone, Copy, Debug)]
 pub struct PyCFunctionFastWithKeywords(pub ffi::_PyCFunctionFastWithKeywords);
-#[derive(Clone, Copy, Debug)]
-pub struct PyGetter(pub ffi::getter);
-#[derive(Clone, Copy, Debug)]
-pub struct PySetter(pub ffi::setter);
+#[derive(Clone, Copy)]
+pub struct PyGetter(pub Getter);
+#[derive(Clone, Copy)]
+pub struct PySetter(pub Setter);
 #[derive(Clone, Copy)]
 pub struct PyClassAttributeFactory(pub for<'p> fn(Python<'p>) -> PyResult<PyObject>);
 
@@ -102,18 +107,18 @@ impl PyClassAttributeDef {
     }
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone)]
 pub struct PyGetterDef {
     pub(crate) name: &'static str,
     pub(crate) meth: PyGetter,
-    doc: &'static str,
+    pub(crate) doc: &'static str,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone)]
 pub struct PySetterDef {
     pub(crate) name: &'static str,
     pub(crate) meth: PySetter,
-    doc: &'static str,
+    pub(crate) doc: &'static str,
 }
 
 unsafe impl Sync for PyMethodDef {}
@@ -212,6 +217,12 @@ impl fmt::Debug for PyClassAttributeDef {
     }
 }
 
+/// Class getter / setters
+pub(crate) type Getter =
+    for<'py> unsafe fn(Python<'py>, *mut ffi::PyObject) -> PyResult<*mut ffi::PyObject>;
+pub(crate) type Setter =
+    for<'py> unsafe fn(Python<'py>, *mut ffi::PyObject, *mut ffi::PyObject) -> PyResult<c_int>;
+
 impl PyGetterDef {
     /// Define a getter.
     pub const fn new(name: &'static str, getter: PyGetter, doc: &'static str) -> Self {
@@ -220,23 +231,6 @@ impl PyGetterDef {
             meth: getter,
             doc,
         }
-    }
-
-    /// Copy descriptor information to `ffi::PyGetSetDef`
-    pub fn copy_to(&self, dst: &mut ffi::PyGetSetDef) {
-        if dst.name.is_null() {
-            let name = get_name(self.name).unwrap();
-            dst.name = name.as_ptr() as _;
-            // FIXME: stop leaking name
-            std::mem::forget(name);
-        }
-        if dst.doc.is_null() {
-            let doc = get_doc(self.doc).unwrap();
-            dst.doc = doc.as_ptr() as _;
-            // FIXME: stop leaking doc
-            std::mem::forget(doc);
-        }
-        dst.get = Some(self.meth.0);
     }
 }
 
@@ -249,41 +243,48 @@ impl PySetterDef {
             doc,
         }
     }
-
-    /// Copy descriptor information to `ffi::PyGetSetDef`
-    pub fn copy_to(&self, dst: &mut ffi::PyGetSetDef) {
-        if dst.name.is_null() {
-            let name = get_name(self.name).unwrap();
-            dst.name = name.as_ptr() as _;
-            // FIXME: stop leaking name
-            std::mem::forget(name);
-        }
-        if dst.doc.is_null() {
-            let doc = get_doc(self.doc).unwrap();
-            dst.doc = doc.as_ptr() as _;
-            // FIXME: stop leaking doc
-            std::mem::forget(doc);
-        }
-        dst.set = Some(self.meth.0);
-    }
 }
 
-fn get_name(name: &'static str) -> PyResult<Cow<'static, CStr>> {
-    extract_c_string(name, "Function name cannot contain NUL byte.")
-}
-
-fn get_doc(doc: &'static str) -> PyResult<Cow<'static, CStr>> {
-    extract_c_string(doc, "Document cannot contain NUL byte.")
-}
-
-/// Unwraps the result of __traverse__ for tp_traverse
+/// Calls an implementation of __traverse__ for tp_traverse
 #[doc(hidden)]
-#[inline]
-pub fn unwrap_traverse_result(result: Result<(), PyTraverseError>) -> c_int {
-    match result {
-        Ok(()) => 0,
-        Err(PyTraverseError(value)) => value,
-    }
+pub unsafe fn call_traverse_impl<T>(
+    slf: *mut ffi::PyObject,
+    impl_: fn(&T, PyVisit<'_>) -> Result<(), PyTraverseError>,
+    visit: ffi::visitproc,
+    arg: *mut c_void,
+) -> c_int
+where
+    T: PyClass,
+{
+    // It is important the implementation of `__traverse__` cannot safely access the GIL,
+    // c.f. https://github.com/PyO3/pyo3/issues/3165, and hence we do not expose our GIL
+    // token to the user code and lock safe methods for acquiring the GIL.
+    // (This includes enforcing the `&self` method receiver as e.g. `PyRef<Self>` could
+    // reconstruct a GIL token via `PyRef::py`.)
+    // Since we do not create a `GILPool` at all, it is important that our usage of the GIL
+    // token does not produce any owned objects thereby calling into `register_owned`.
+    let trap = PanicTrap::new("uncaught panic inside __traverse__ handler");
+
+    let py = Python::assume_gil_acquired();
+    let slf = py.from_borrowed_ptr::<PyCell<T>>(slf);
+    let borrow = slf.try_borrow();
+    let visit = PyVisit::from_raw(visit, arg, py);
+
+    let retval = if let Ok(borrow) = borrow {
+        let _lock = LockGIL::during_traverse();
+
+        match catch_unwind(AssertUnwindSafe(move || impl_(&*borrow, visit))) {
+            Ok(res) => match res {
+                Ok(()) => 0,
+                Err(PyTraverseError(value)) => value,
+            },
+            Err(_err) => -1,
+        }
+    } else {
+        0
+    };
+    trap.disarm();
+    retval
 }
 
 pub(crate) struct PyMethodDefDestructor {
@@ -318,4 +319,12 @@ where
     fn wrap(self, py: Python<'_>) -> Result<Py<PyAny>, Self::Error> {
         self.map(|o| o.into_py(py))
     }
+}
+
+pub(crate) fn get_name(name: &'static str) -> PyResult<Cow<'static, CStr>> {
+    extract_c_string(name, "function name cannot contain NUL byte.")
+}
+
+pub(crate) fn get_doc(doc: &'static str) -> PyResult<Cow<'static, CStr>> {
+    extract_c_string(doc, "function doc cannot contain NUL byte.")
 }

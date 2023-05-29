@@ -234,7 +234,9 @@ pub fn gen_py_method(
             Some(quote!(_pyo3::ffi::METH_STATIC)),
         )?),
         // special prototypes
-        (_, FnType::FnNew) => GeneratedPyMethod::Proto(impl_py_method_def_new(cls, spec)?),
+        (_, FnType::FnNew) | (_, FnType::FnNewClass) => {
+            GeneratedPyMethod::Proto(impl_py_method_def_new(cls, spec)?)
+        }
 
         (_, FnType::Getter(self_type)) => GeneratedPyMethod::Method(impl_py_getter_def(
             cls,
@@ -404,22 +406,8 @@ fn impl_traverse_slot(cls: &syn::Type, rust_fn_ident: &syn::Ident) -> MethodAndS
             slf: *mut _pyo3::ffi::PyObject,
             visit: _pyo3::ffi::visitproc,
             arg: *mut ::std::os::raw::c_void,
-        ) -> ::std::os::raw::c_int
-        {
-            let trap = _pyo3::impl_::panic::PanicTrap::new("uncaught panic inside __traverse__ handler");
-            let pool = _pyo3::GILPool::new();
-            let py = pool.python();
-            let slf = py.from_borrowed_ptr::<_pyo3::PyCell<#cls>>(slf);
-
-            let visit = _pyo3::class::gc::PyVisit::from_raw(visit, arg, py);
-            let borrow = slf.try_borrow();
-            let retval = if let ::std::result::Result::Ok(borrow) = borrow {
-                _pyo3::impl_::pymethods::unwrap_traverse_result(borrow.#rust_fn_ident(visit))
-            } else {
-                0
-            };
-            trap.disarm();
-            retval
+        ) -> ::std::os::raw::c_int {
+            _pyo3::impl_::pymethods::call_traverse_impl::<#cls>(slf, #cls::#rust_fn_ident, visit, arg)
         }
     };
     let slot_def = quote! {
@@ -456,9 +444,8 @@ fn impl_py_class_attribute(cls: &syn::Type, spec: &FnSpec<'_>) -> syn::Result<Me
         fn #wrapper_ident(py: _pyo3::Python<'_>) -> _pyo3::PyResult<_pyo3::PyObject> {
             let function = #cls::#name; // Shadow the method name to avoid #3017
             #deprecations
-            let mut ret = #fncall;
-            let owned = _pyo3::impl_::pymethods::OkWrap::wrap(ret, py);
-            owned.map_err(::core::convert::Into::into)
+            _pyo3::impl_::pymethods::OkWrap::wrap(#fncall, py)
+                .map_err(::core::convert::Into::into)
         }
     };
 
@@ -583,22 +570,7 @@ pub fn impl_py_setter_def(
             #deprecations
             _pyo3::class::PySetterDef::new(
                 #python_name,
-                _pyo3::impl_::pymethods::PySetter({
-                    unsafe extern "C" fn trampoline(
-                        slf: *mut _pyo3::ffi::PyObject,
-                        value: *mut _pyo3::ffi::PyObject,
-                        closure: *mut ::std::os::raw::c_void,
-                    ) -> ::std::os::raw::c_int
-                    {
-                        _pyo3::impl_::trampoline::setter(
-                            slf,
-                            value,
-                            closure,
-                            #cls::#wrapper_ident
-                        )
-                    }
-                    trampoline
-                }),
+                _pyo3::impl_::pymethods::PySetter(#cls::#wrapper_ident),
                 #doc
             )
         })
@@ -719,20 +691,7 @@ pub fn impl_py_getter_def(
             #deprecations
             _pyo3::class::PyGetterDef::new(
                 #python_name,
-                _pyo3::impl_::pymethods::PyGetter({
-                    unsafe extern "C" fn trampoline(
-                        slf: *mut _pyo3::ffi::PyObject,
-                        closure: *mut ::std::os::raw::c_void,
-                    ) -> *mut _pyo3::ffi::PyObject
-                    {
-                        _pyo3::impl_::trampoline::getter(
-                            slf,
-                            closure,
-                            #cls::#wrapper_ident
-                        )
-                    }
-                    trampoline
-                }),
+                _pyo3::impl_::pymethods::PyGetter(#cls::#wrapper_ident),
                 #doc
             )
         })

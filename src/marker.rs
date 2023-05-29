@@ -120,7 +120,7 @@
 //! [`Rc`]: std::rc::Rc
 //! [`Py`]: crate::Py
 use crate::err::{self, PyDowncastError, PyErr, PyResult};
-use crate::gil::{self, GILGuard, GILPool, SuspendGIL};
+use crate::gil::{GILGuard, GILPool, SuspendGIL};
 use crate::impl_::not_send::NotSend;
 use crate::types::{PyAny, PyDict, PyModule, PyString, PyType};
 use crate::version::PythonVersionInfo;
@@ -140,6 +140,48 @@ use std::os::raw::c_int;
 /// the GIL is not held.
 ///
 /// See the [module-level documentation](self) for more information.
+///
+/// # Examples
+///
+/// This tracking is currently imprecise as it relies on the [`Send`] auto trait on stable Rust.
+/// For example, an `Rc` smart pointer should be usable without the GIL, but we currently prevent that:
+///
+/// ```compile_fail
+/// # use pyo3::prelude::*;
+/// use std::rc::Rc;
+///
+/// Python::with_gil(|py| {
+///     let rc = Rc::new(42);
+///
+///     py.allow_threads(|| {
+///         println!("{:?}", rc);
+///     });
+/// });
+/// ```
+///
+/// This also implies that the interplay between `with_gil` and `allow_threads` is unsound, for example
+/// one can circumvent this protection using the [`send_wrapper`](https://docs.rs/send_wrapper/) crate:
+///
+/// ```no_run
+/// # use pyo3::prelude::*;
+/// # use pyo3::types::PyString;
+/// use send_wrapper::SendWrapper;
+///
+/// Python::with_gil(|py| {
+///     let string = PyString::new(py, "foo");
+///
+///     let wrapped = SendWrapper::new(string);
+///
+///     py.allow_threads(|| {
+///         let sneaky: &PyString = *wrapped;
+///
+///         println!("{:?}", sneaky);
+///     });
+/// });
+/// ```
+///
+/// Fixing this loophole on stable Rust has significant ergonomic issues, but it is fixed when using
+/// nightly Rust and the `nightly` feature, c.f. [#2141](https://github.com/PyO3/pyo3/issues/2141).
 #[cfg_attr(docsrs, doc(cfg(all())))] // Hide the cfg flag
 #[cfg(not(feature = "nightly"))]
 pub unsafe trait Ungil {}
@@ -156,6 +198,70 @@ unsafe impl<T: Send> Ungil for T {}
 /// the GIL is not held.
 ///
 /// See the [module-level documentation](self) for more information.
+///
+/// # Examples
+///
+/// Types which are `Ungil` cannot be used in contexts where the GIL was released, e.g.
+///
+/// ```compile_fail
+/// # use pyo3::prelude::*;
+/// # use pyo3::types::PyString;
+/// Python::with_gil(|py| {
+///     let string = PyString::new(py, "foo");
+///
+///     py.allow_threads(|| {
+///         println!("{:?}", string);
+///     });
+/// });
+/// ```
+///
+/// This applies to the GIL token `Python` itself as well, e.g.
+///
+/// ```compile_fail
+/// # use pyo3::prelude::*;
+/// Python::with_gil(|py| {
+///     py.allow_threads(|| {
+///         drop(py);
+///     });
+/// });
+/// ```
+///
+/// On nightly Rust, this is not based on the [`Send`] auto trait and hence we are able
+/// to prevent incorrectly circumventing it using e.g. the [`send_wrapper`](https://docs.rs/send_wrapper/) crate:
+///
+/// ```compile_fail
+/// # use pyo3::prelude::*;
+/// # use pyo3::types::PyString;
+/// use send_wrapper::SendWrapper;
+///
+/// Python::with_gil(|py| {
+///     let string = PyString::new(py, "foo");
+///
+///     let wrapped = SendWrapper::new(string);
+///
+///     py.allow_threads(|| {
+///         let sneaky: &PyString = *wrapped;
+///
+///         println!("{:?}", sneaky);
+///     });
+/// });
+/// ```
+///
+/// This also enables using non-[`Send`] types in `allow_threads`,
+/// at least if they are not also bound to the GIL:
+///
+/// ```rust
+/// # use pyo3::prelude::*;
+/// use std::rc::Rc;
+///
+/// Python::with_gil(|py| {
+///     let rc = Rc::new(42);
+///
+///     py.allow_threads(|| {
+///         println!("{:?}", rc);
+///     });
+/// });
+/// ```
 #[cfg(feature = "nightly")]
 pub unsafe auto trait Ungil {}
 
@@ -279,6 +385,10 @@ impl Python<'_> {
     /// Acquires the global interpreter lock, allowing access to the Python interpreter. The
     /// provided closure `F` will be executed with the acquired `Python` marker token.
     ///
+    /// If implementing [`#[pymethods]`](crate::pymethods) or [`#[pyfunction]`](crate::pyfunction),
+    /// declare `py: Python` as an argument. PyO3 will pass in the token to grant access to the GIL
+    /// context in which the function is running, avoiding the need to call `with_gil`.
+    ///
     /// If the [`auto-initialize`] feature is enabled and the Python runtime is not already
     /// initialized, this function will initialize it. See
     #[cfg_attr(
@@ -317,7 +427,10 @@ impl Python<'_> {
     where
         F: for<'py> FnOnce(Python<'py>) -> R,
     {
-        f(unsafe { gil::ensure_gil().python() })
+        let _guard = GILGuard::acquire();
+
+        // SAFETY: Either the GIL was already acquired or we just created a new `GILGuard`.
+        f(unsafe { Python::assume_gil_acquired() })
     }
 
     /// Like [`Python::with_gil`] except Python interpreter state checking is skipped.
@@ -348,57 +461,14 @@ impl Python<'_> {
     where
         F: for<'py> FnOnce(Python<'py>) -> R,
     {
-        f(gil::ensure_gil_unchecked().python())
+        let _guard = GILGuard::acquire_unchecked();
+
+        // SAFETY: Either the GIL was already acquired or we just created a new `GILGuard`.
+        f(Python::assume_gil_acquired())
     }
 }
 
 impl<'py> Python<'py> {
-    /// Acquires the global interpreter lock, allowing access to the Python interpreter.
-    ///
-    /// If the [`auto-initialize`] feature is enabled and the Python runtime is not already
-    /// initialized, this function will initialize it. See
-    #[cfg_attr(
-        not(PyPy),
-        doc = "[`prepare_freethreaded_python`](crate::prepare_freethreaded_python)"
-    )]
-    #[cfg_attr(PyPy, doc = "`prepare_freethreaded_python`")]
-    /// for details.
-    ///
-    /// Most users should not need to use this API directly, and should prefer one of two options:
-    /// 1. If implementing [`#[pymethods]`](crate::pymethods) or [`#[pyfunction]`](crate::pyfunction),  declare `py: Python` as an argument.
-    /// PyO3 will pass in the token to grant access to the GIL context in which the function is running.
-    /// 2. Use [`Python::with_gil`] to run a closure with the GIL, acquiring only if needed.
-    ///
-    /// # Panics
-    ///
-    /// - If the [`auto-initialize`] feature is not enabled and the Python interpreter is not
-    /// initialized.
-    /// - If multiple [`GILGuard`]s are not dropped in in the reverse order of acquisition, PyO3
-    /// may panic. It is recommended to use [`Python::with_gil`] instead to avoid this.
-    ///
-    /// # Notes
-    ///
-    /// The return type from this function, [`GILGuard`], is implemented as a RAII guard
-    /// around [`PyGILState_Ensure`]. This means that multiple `acquire_gil()` calls are
-    /// allowed, and will not deadlock. However, [`GILGuard`]s must be dropped in the reverse order
-    /// to acquisition. If PyO3 detects this order is not maintained, it will panic when the out-of-order drop occurs.
-    ///
-    /// # Deprecation
-    ///
-    /// This API has been deprecated for several reasons:
-    /// - GIL drop order tracking has turned out to be [error prone](https://github.com/PyO3/pyo3/issues/1683).
-    /// With a scoped API like `Python::with_gil`, these are always dropped in the correct order.
-    /// - It promotes passing and keeping the GILGuard around, which is almost always not what you actually want.
-    ///
-    /// [`PyGILState_Ensure`]: crate::ffi::PyGILState_Ensure
-    /// [`auto-initialize`]: https://pyo3.rs/main/features.html#auto-initialize
-    #[inline]
-    // Once removed, we can remove GILGuard's drop tracking.
-    #[deprecated(since = "0.17.0", note = "prefer Python::with_gil")]
-    pub fn acquire_gil() -> GILGuard {
-        GILGuard::acquire()
-    }
-
     /// Temporarily releases the GIL, thus allowing other Python threads to run. The GIL will be
     /// reacquired when `F`'s scope ends.
     ///
@@ -820,8 +890,8 @@ impl<'py> Python<'py> {
     /// all have their Python reference counts decremented, potentially allowing Python to drop
     /// the corresponding Python objects.
     ///
-    /// Typical usage of PyO3 will not need this API, as [`Python::with_gil`] and
-    /// [`Python::acquire_gil`] automatically create a `GILPool` where appropriate.
+    /// Typical usage of PyO3 will not need this API, as [`Python::with_gil`] automatically creates
+    /// a `GILPool` where appropriate.
     ///
     /// Advanced uses of PyO3 which perform long-running tasks which never free the GIL may need
     /// to use this API to clear memory, as PyO3 usually does not clear memory until the GIL is
