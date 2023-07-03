@@ -51,7 +51,7 @@
 //!
 //! PyO3 supports the following software versions:
 //!   - Python 3.7 and up (CPython and PyPy)
-//!   - Rust 1.48 and up
+//!   - Rust 1.56 and up
 //!
 //! # Example: Building Python Native modules
 //!
@@ -75,9 +75,7 @@
 //! crate-type = ["cdylib"]
 //!
 //! [dependencies.pyo3-ffi]
-// workaround for `extended_key_value_attributes`: https://github.com/rust-lang/rust/issues/82768#issuecomment-803935643
-#![cfg_attr(docsrs, cfg_attr(docsrs, doc = concat!("version = \"", env!("CARGO_PKG_VERSION"),  "\"")))]
-#![cfg_attr(not(docsrs), doc = "version = \"*\"")]
+#![doc = concat!("version = \"", env!("CARGO_PKG_VERSION"),  "\"")]
 //! features = ["extension-module"]
 //! ```
 //!
@@ -256,19 +254,6 @@ macro_rules! opaque_struct {
         #[repr(C)]
         pub struct $name([u8; 0]);
     };
-}
-
-macro_rules! addr_of_mut_shim {
-    ($place:expr) => {{
-        #[cfg(addr_of)]
-        {
-            ::std::ptr::addr_of_mut!($place)
-        }
-        #[cfg(not(addr_of))]
-        {
-            &mut $place as *mut _
-        }
-    }};
 }
 
 pub use self::abstract_::*;

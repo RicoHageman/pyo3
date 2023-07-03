@@ -3,7 +3,87 @@
 This guide can help you upgrade code through breaking changes from one PyO3 version to the next.
 For a detailed list of all changes, see the [CHANGELOG](changelog.md).
 
+## from 0.19.* to 0.20
+
+### Drop support for older technologies
+
+PyO3 0.20 has increased minimum Rust version to 1.56. This enables use of newer language features and simplifies maintenance of the project.
+
+### Required arguments are no longer accepted after optional arguments
+
+[Trailing `Option<T>` arguments](./function/signature.md#trailing-optional-arguments) have an automatic default of `None`. To avoid unwanted changes when modifying function signatures, in PyO3 0.18 it was deprecated to have a required argument after an `Option<T>` argument without using `#[pyo3(signature = (...))]` to specify the intended defaults. In PyO3 0.20, this becomes a hard error.
+
+Before:
+
+```rust,ignore
+#[pyfunction]
+fn x_or_y(x: Option<u64>, y: u64) -> u64 {
+    x.unwrap_or(y)
+}
+```
+
+After:
+
+```rust
+# #![allow(dead_code)]
+# use pyo3::prelude::*;
+
+#[pyfunction]
+#[pyo3(signature = (x, y))] // both x and y have no defaults and are required
+fn x_or_y(x: Option<u64>, y: u64) -> u64 {
+    x.unwrap_or(y)
+}
+```
+
+### Remove deprecated function forms
+
+In PyO3 0.18 the `#[args]` attribute for `#[pymethods]`, and directly specifying the function signature in `#[pyfunction]`, was deprecated. This functionality has been removed in PyO3 0.20.
+
+Before:
+
+```rust,ignore
+#[pyfunction]
+#[pyo3(a, b = "0", "/")]
+fn add(a: u64, b: u64) -> u64 {
+    a + b
+}
+```
+
+After:
+
+```rust
+# #![allow(dead_code)]
+# use pyo3::prelude::*;
+
+#[pyfunction]
+#[pyo3(signature = (a, b=0, /))]
+fn add(a: u64, b: u64) -> u64 {
+    a + b
+}
+```
+
 ## from 0.18.* to 0.19
+
+### Access to `Python` inside `__traverse__` implementations are now forbidden
+
+During `__traverse__` implementations for Python's Garbage Collection it is forbidden to do anything other than visit the members of the `#[pyclass]` being traversed. This means making Python function calls or other API calls are forbidden.
+
+Previous versions of PyO3 would allow access to `Python` (e.g. via `Python::with_gil`), which could cause the Python interpreter to crash or otherwise confuse the garbage collection algorithm.
+
+Attempts to acquire the GIL will now panic. See [#3165](https://github.com/PyO3/pyo3/issues/3165) for more detail.
+
+```rust,ignore
+# use pyo3::prelude::*;
+
+#[pyclass]
+struct SomeClass {}
+
+impl SomeClass {
+    fn __traverse__(&self, pyo3::class::gc::PyVisit<'_>) -> Result<(), pyo3::class::gc::PyTraverseError>` {
+        Python::with_gil(|| { /*...*/ })  // ERROR: this will panic
+    }
+}
+```
 
 ### Smarter `anyhow::Error` / `eyre::Report` conversion when inner error is "simple" `PyErr`
 
@@ -23,12 +103,16 @@ fn raise_err() -> anyhow::Result<()> {
 fn main() {
     Python::with_gil(|py| {
         let rs_func = wrap_pyfunction!(raise_err, py).unwrap();
-        pyo3::py_run!(py, rs_func, r"
+        pyo3::py_run!(
+            py,
+            rs_func,
+            r"
         try:
             rs_func()
         except Exception as e:
             print(repr(e))
-        ");
+        "
+        );
     })
 }
 # }
@@ -102,9 +186,7 @@ drop(second);
 // Or it ensure releasing the inner lock before the outer one.
 Python::with_gil(|py| {
     let first = Object::new(py);
-    let second = Python::with_gil(|py| {
-        Object::new(py)
-    });
+    let second = Python::with_gil(|py| Object::new(py));
     drop(first);
     drop(second);
 });
@@ -127,7 +209,7 @@ Before, x in the below example would be required to be passed from Python code:
 # use pyo3::prelude::*;
 
 #[pyfunction]
-fn required_argument_after_option(x: Option<i32>, y: i32) { }
+fn required_argument_after_option(x: Option<i32>, y: i32) {}
 ```
 
 After, specify the intended Python signature explicitly:
@@ -138,11 +220,11 @@ After, specify the intended Python signature explicitly:
 
 // If x really was intended to be required
 #[pyfunction(signature = (x, y))]
-fn required_argument_after_option_a(x: Option<i32>, y: i32) { }
+fn required_argument_after_option_a(x: Option<i32>, y: i32) {}
 
 // If x was intended to be optional, y needs a default too
 #[pyfunction(signature = (x=None, y=0))]
-fn required_argument_after_option_b(x: Option<i32>, y: i32) { }
+fn required_argument_after_option_b(x: Option<i32>, y: i32) {}
 ```
 
 ### `__text_signature__` is now automatically generated for `#[pyfunction]` and `#[pymethods]`

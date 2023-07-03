@@ -1,7 +1,3 @@
-// Copyright (c) 2017-present PyO3 Project and Contributors
-//
-// based on Daniel Grunwald's https://github.com/dgrunwald/rust-cpython
-
 use crate::err::{self, PyResult};
 use crate::{ffi, AsPyPointer, PyAny, PyTypeInfo, Python};
 
@@ -9,7 +5,7 @@ use crate::{ffi, AsPyPointer, PyAny, PyTypeInfo, Python};
 #[repr(transparent)]
 pub struct PyType(PyAny);
 
-pyobject_native_type_core!(PyType, ffi::PyType_Type, #checkfunction=ffi::PyType_Check);
+pyobject_native_type_core!(PyType, pyobject_native_static_type_object!(ffi::PyType_Type), #checkfunction=ffi::PyType_Check);
 
 impl PyType {
     /// Creates a new type object.

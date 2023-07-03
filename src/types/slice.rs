@@ -1,5 +1,3 @@
-// Copyright (c) 2017-present PyO3 Project and Contributors
-
 use crate::err::{PyErr, PyResult};
 use crate::ffi::{self, Py_ssize_t};
 use crate::{AsPyPointer, PyAny, PyObject, Python, ToPyObject};
@@ -14,7 +12,7 @@ pub struct PySlice(PyAny);
 pyobject_native_type!(
     PySlice,
     ffi::PySliceObject,
-    ffi::PySlice_Type,
+    pyobject_native_static_type_object!(ffi::PySlice_Type),
     #checkfunction=ffi::PySlice_Check
 );
 

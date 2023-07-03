@@ -1,11 +1,9 @@
-// Copyright (c) 2017-present PyO3 Project and Contributors
-
 use std::borrow::Cow;
 
 use crate::attributes::NameAttribute;
 use crate::method::{CallingConvention, ExtractErrorMode};
+use crate::utils;
 use crate::utils::{ensure_not_async_fn, PythonDoc};
-use crate::{deprecations::Deprecations, utils};
 use crate::{
     method::{FnArg, FnSpec, FnType, SelfType},
     pyfunction::PyFunctionOptions,
@@ -135,6 +133,12 @@ impl PyMethodKind {
             "__ror__" => PyMethodKind::Proto(PyMethodProtoKind::SlotFragment(&__ROR__)),
             "__pow__" => PyMethodKind::Proto(PyMethodProtoKind::SlotFragment(&__POW__)),
             "__rpow__" => PyMethodKind::Proto(PyMethodProtoKind::SlotFragment(&__RPOW__)),
+            "__lt__" => PyMethodKind::Proto(PyMethodProtoKind::SlotFragment(&__LT__)),
+            "__le__" => PyMethodKind::Proto(PyMethodProtoKind::SlotFragment(&__LE__)),
+            "__eq__" => PyMethodKind::Proto(PyMethodProtoKind::SlotFragment(&__EQ__)),
+            "__ne__" => PyMethodKind::Proto(PyMethodProtoKind::SlotFragment(&__NE__)),
+            "__gt__" => PyMethodKind::Proto(PyMethodProtoKind::SlotFragment(&__GT__)),
+            "__ge__" => PyMethodKind::Proto(PyMethodProtoKind::SlotFragment(&__GE__)),
             // Some tricky protocols which don't fit the pattern of the rest
             "__call__" => PyMethodKind::Proto(PyMethodProtoKind::Call),
             "__traverse__" => PyMethodKind::Proto(PyMethodProtoKind::Traverse),
@@ -206,7 +210,7 @@ pub fn gen_py_method(
                     GeneratedPyMethod::Proto(impl_call_slot(cls, method.spec)?)
                 }
                 PyMethodProtoKind::Traverse => {
-                    GeneratedPyMethod::Proto(impl_traverse_slot(cls, spec.name))
+                    GeneratedPyMethod::Proto(impl_traverse_slot(cls, spec)?)
                 }
                 PyMethodProtoKind::SlotFragment(slot_fragment_def) => {
                     let proto = slot_fragment_def.generate_pyproto_fragment(cls, spec)?;
@@ -400,7 +404,16 @@ fn impl_call_slot(cls: &syn::Type, mut spec: FnSpec<'_>) -> Result<MethodAndSlot
     })
 }
 
-fn impl_traverse_slot(cls: &syn::Type, rust_fn_ident: &syn::Ident) -> MethodAndSlotDef {
+fn impl_traverse_slot(cls: &syn::Type, spec: &FnSpec<'_>) -> syn::Result<MethodAndSlotDef> {
+    if let (Some(py_arg), _) = split_off_python_arg(&spec.signature.arguments) {
+        return Err(syn::Error::new_spanned(py_arg.ty, "__traverse__ may not take `Python`. \
+            Usually, an implementation of `__traverse__` should do nothing but calls to `visit.call`. \
+            Most importantly, safe access to the GIL is prohibited inside implementations of `__traverse__`, \
+            i.e. `Python::with_gil` will panic."));
+    }
+
+    let rust_fn_ident = spec.name;
+
     let associated_method = quote! {
         pub unsafe extern "C" fn __pymethod_traverse__(
             slf: *mut _pyo3::ffi::PyObject,
@@ -416,10 +429,10 @@ fn impl_traverse_slot(cls: &syn::Type, rust_fn_ident: &syn::Ident) -> MethodAndS
             pfunc: #cls::__pymethod_traverse__ as _pyo3::ffi::traverseproc as _
         }
     };
-    MethodAndSlotDef {
+    Ok(MethodAndSlotDef {
         associated_method,
         slot_def,
-    }
+    })
 }
 
 fn impl_py_class_attribute(cls: &syn::Type, spec: &FnSpec<'_>) -> syn::Result<MethodAndMethodDef> {
@@ -437,13 +450,11 @@ fn impl_py_class_attribute(cls: &syn::Type, spec: &FnSpec<'_>) -> syn::Result<Me
     };
 
     let wrapper_ident = format_ident!("__pymethod_{}__", name);
-    let deprecations = &spec.deprecations;
     let python_name = spec.null_terminated_python_name();
 
     let associated_method = quote! {
         fn #wrapper_ident(py: _pyo3::Python<'_>) -> _pyo3::PyResult<_pyo3::PyObject> {
             let function = #cls::#name; // Shadow the method name to avoid #3017
-            #deprecations
             _pyo3::impl_::pymethods::OkWrap::wrap(#fncall, py)
                 .map_err(::core::convert::Into::into)
         }
@@ -492,7 +503,6 @@ pub fn impl_py_setter_def(
     property_type: PropertyType<'_>,
 ) -> Result<MethodAndMethodDef> {
     let python_name = property_type.null_terminated_python_name()?;
-    let deprecations = property_type.deprecations();
     let doc = property_type.doc();
     let setter_impl = match property_type {
         PropertyType::Descriptor {
@@ -540,7 +550,11 @@ pub fn impl_py_setter_def(
 
     let mut cfg_attrs = TokenStream::new();
     if let PropertyType::Descriptor { field, .. } = &property_type {
-        for attr in field.attrs.iter().filter(|attr| attr.path.is_ident("cfg")) {
+        for attr in field
+            .attrs
+            .iter()
+            .filter(|attr| attr.path().is_ident("cfg"))
+        {
             attr.to_tokens(&mut cfg_attrs);
         }
     }
@@ -566,14 +580,13 @@ pub fn impl_py_setter_def(
 
     let method_def = quote! {
         #cfg_attrs
-        _pyo3::class::PyMethodDefType::Setter({
-            #deprecations
+        _pyo3::class::PyMethodDefType::Setter(
             _pyo3::class::PySetterDef::new(
                 #python_name,
                 _pyo3::impl_::pymethods::PySetter(#cls::#wrapper_ident),
                 #doc
             )
-        })
+        )
     };
 
     Ok(MethodAndMethodDef {
@@ -605,7 +618,6 @@ pub fn impl_py_getter_def(
     property_type: PropertyType<'_>,
 ) -> Result<MethodAndMethodDef> {
     let python_name = property_type.null_terminated_python_name()?;
-    let deprecations = property_type.deprecations();
     let doc = property_type.doc();
     let getter_impl = match property_type {
         PropertyType::Descriptor {
@@ -668,7 +680,11 @@ pub fn impl_py_getter_def(
 
     let mut cfg_attrs = TokenStream::new();
     if let PropertyType::Descriptor { field, .. } = &property_type {
-        for attr in field.attrs.iter().filter(|attr| attr.path.is_ident("cfg")) {
+        for attr in field
+            .attrs
+            .iter()
+            .filter(|attr| attr.path().is_ident("cfg"))
+        {
             attr.to_tokens(&mut cfg_attrs);
         }
     }
@@ -687,14 +703,13 @@ pub fn impl_py_getter_def(
 
     let method_def = quote! {
         #cfg_attrs
-        _pyo3::class::PyMethodDefType::Getter({
-            #deprecations
+        _pyo3::class::PyMethodDefType::Getter(
             _pyo3::class::PyGetterDef::new(
                 #python_name,
                 _pyo3::impl_::pymethods::PyGetter(#cls::#wrapper_ident),
                 #doc
             )
-        })
+        )
     };
 
     Ok(MethodAndMethodDef {
@@ -740,13 +755,6 @@ impl PropertyType<'_> {
                 Ok(syn::LitStr::new(&name, field.span()))
             }
             PropertyType::Function { spec, .. } => Ok(spec.null_terminated_python_name()),
-        }
-    }
-
-    fn deprecations(&self) -> Option<&Deprecations> {
-        match self {
-            PropertyType::Descriptor { .. } => None,
-            PropertyType::Function { spec, .. } => Some(&spec.deprecations),
         }
     }
 
@@ -1297,6 +1305,25 @@ const __POW__: SlotFragmentDef = SlotFragmentDef::new("__pow__", &[Ty::Object, T
     .extract_error_mode(ExtractErrorMode::NotImplemented)
     .ret_ty(Ty::Object);
 const __RPOW__: SlotFragmentDef = SlotFragmentDef::new("__rpow__", &[Ty::Object, Ty::Object])
+    .extract_error_mode(ExtractErrorMode::NotImplemented)
+    .ret_ty(Ty::Object);
+
+const __LT__: SlotFragmentDef = SlotFragmentDef::new("__lt__", &[Ty::Object])
+    .extract_error_mode(ExtractErrorMode::NotImplemented)
+    .ret_ty(Ty::Object);
+const __LE__: SlotFragmentDef = SlotFragmentDef::new("__le__", &[Ty::Object])
+    .extract_error_mode(ExtractErrorMode::NotImplemented)
+    .ret_ty(Ty::Object);
+const __EQ__: SlotFragmentDef = SlotFragmentDef::new("__eq__", &[Ty::Object])
+    .extract_error_mode(ExtractErrorMode::NotImplemented)
+    .ret_ty(Ty::Object);
+const __NE__: SlotFragmentDef = SlotFragmentDef::new("__ne__", &[Ty::Object])
+    .extract_error_mode(ExtractErrorMode::NotImplemented)
+    .ret_ty(Ty::Object);
+const __GT__: SlotFragmentDef = SlotFragmentDef::new("__gt__", &[Ty::Object])
+    .extract_error_mode(ExtractErrorMode::NotImplemented)
+    .ret_ty(Ty::Object);
+const __GE__: SlotFragmentDef = SlotFragmentDef::new("__ge__", &[Ty::Object])
     .extract_error_mode(ExtractErrorMode::NotImplemented)
     .ret_ty(Ty::Object);
 

@@ -1,13 +1,10 @@
-// Copyright (c) 2017-present PyO3 Project and Contributors
-
 use super::PyMapping;
 use crate::err::{self, PyErr, PyResult};
 use crate::ffi::Py_ssize_t;
 use crate::types::{PyAny, PyList};
-use crate::{ffi, AsPyPointer, Python, ToPyObject};
 #[cfg(not(PyPy))]
-use crate::{IntoPyPointer, PyObject};
-use std::ptr::NonNull;
+use crate::IntoPyPointer;
+use crate::{ffi, AsPyPointer, PyObject, Python, ToPyObject};
 
 /// Represents a Python `dict`.
 #[repr(transparent)]
@@ -16,7 +13,7 @@ pub struct PyDict(PyAny);
 pyobject_native_type!(
     PyDict,
     ffi::PyDictObject,
-    ffi::PyDict_Type,
+    pyobject_native_static_type_object!(ffi::PyDict_Type),
     #checkfunction=ffi::PyDict_Check
 );
 
@@ -28,7 +25,7 @@ pub struct PyDictKeys(PyAny);
 #[cfg(not(PyPy))]
 pyobject_native_type_core!(
     PyDictKeys,
-    ffi::PyDictKeys_Type,
+    pyobject_native_static_type_object!(ffi::PyDictKeys_Type),
     #checkfunction=ffi::PyDictKeys_Check
 );
 
@@ -40,7 +37,7 @@ pub struct PyDictValues(PyAny);
 #[cfg(not(PyPy))]
 pyobject_native_type_core!(
     PyDictValues,
-    ffi::PyDictValues_Type,
+    pyobject_native_static_type_object!(ffi::PyDictValues_Type),
     #checkfunction=ffi::PyDictValues_Check
 );
 
@@ -52,7 +49,7 @@ pub struct PyDictItems(PyAny);
 #[cfg(not(PyPy))]
 pyobject_native_type_core!(
     PyDictItems,
-    ffi::PyDictItems_Type,
+    pyobject_native_static_type_object!(ffi::PyDictItems_Type),
     #checkfunction=ffi::PyDictItems_Check
 );
 
@@ -145,12 +142,16 @@ impl PyDict {
     where
         K: ToPyObject,
     {
+        self.get_item_impl(key.to_object(self.py()))
+    }
+
+    fn get_item_impl(&self, key: PyObject) -> Option<&PyAny> {
+        let py = self.py();
         unsafe {
-            let ptr = ffi::PyDict_GetItem(self.as_ptr(), key.to_object(self.py()).as_ptr());
-            NonNull::new(ptr).map(|p| {
-                // PyDict_GetItem return s borrowed ptr, must make it owned for safety (see #890).
-                self.py().from_owned_ptr(ffi::_Py_NewRef(p.as_ptr()))
-            })
+            let ptr = ffi::PyDict_GetItem(self.as_ptr(), key.as_ptr());
+            // PyDict_GetItem returns a borrowed ptr, must make it owned for safety (see #890).
+            // PyObject::from_borrowed_ptr_or_opt will take ownership in this way.
+            PyObject::from_borrowed_ptr_or_opt(py, ptr).map(|pyobject| pyobject.into_ref(py))
         }
     }
 
@@ -159,19 +160,23 @@ impl PyDict {
     /// returns `Ok(None)` if item is not present, or `Err(PyErr)` if an error occurs.
     ///
     /// To get a `KeyError` for non-existing keys, use `PyAny::get_item_with_error`.
-    #[cfg(not(PyPy))]
     pub fn get_item_with_error<K>(&self, key: K) -> PyResult<Option<&PyAny>>
     where
         K: ToPyObject,
     {
-        unsafe {
-            let ptr =
-                ffi::PyDict_GetItemWithError(self.as_ptr(), key.to_object(self.py()).as_ptr());
-            if !ffi::PyErr_Occurred().is_null() {
-                return Err(PyErr::fetch(self.py()));
-            }
+        self.get_item_with_error_impl(key.to_object(self.py()))
+    }
 
-            Ok(NonNull::new(ptr).map(|p| self.py().from_owned_ptr(ffi::_Py_NewRef(p.as_ptr()))))
+    fn get_item_with_error_impl(&self, key: PyObject) -> PyResult<Option<&PyAny>> {
+        let py = self.py();
+        unsafe {
+            let ptr = ffi::PyDict_GetItemWithError(self.as_ptr(), key.as_ptr());
+            // PyDict_GetItemWithError returns a borrowed ptr, must make it owned for safety (see #890).
+            // PyObject::from_borrowed_ptr_or_opt will take ownership in this way.
+            PyObject::from_borrowed_ptr_or_opt(py, ptr)
+                .map(|pyobject| Ok(pyobject.into_ref(py)))
+                .or_else(|| PyErr::take(py).map(Err))
+                .transpose()
         }
     }
 

@@ -1,7 +1,3 @@
-// Copyright (c) 2017-present PyO3 Project and Contributors
-//
-// based on Daniel Grunwald's https://github.com/dgrunwald/rust-cpython
-
 use crate::{ffi, PyAny};
 
 /// Represents a Python `int` object.
@@ -13,4 +9,4 @@ use crate::{ffi, PyAny};
 #[repr(transparent)]
 pub struct PyLong(PyAny);
 
-pyobject_native_type_core!(PyLong, ffi::PyLong_Type, #checkfunction=ffi::PyLong_Check);
+pyobject_native_type_core!(PyLong, pyobject_native_static_type_object!(ffi::PyLong_Type), #checkfunction=ffi::PyLong_Check);

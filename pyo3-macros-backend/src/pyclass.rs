@@ -1,5 +1,3 @@
-// Copyright (c) 2017-present PyO3 Project and Contributors
-
 use std::borrow::Cow;
 
 use crate::attributes::{
@@ -266,7 +264,7 @@ enum Annotated<X, Y> {
     Struct(Y),
 }
 
-impl<X: Spanned, Y: Spanned> Spanned for Annotated<X, Y> {
+impl<X: Spanned, Y: Spanned> Annotated<X, Y> {
     fn span(&self) -> Span {
         match self {
             Self::Field(x) => x.span(),
@@ -431,7 +429,7 @@ impl<'a> PyClassEnum<'a> {
         // "Under the default representation, the specified discriminant is interpreted as an isize
         // value", so `isize` should be enough by default.
         let mut repr_type = syn::Ident::new("isize", proc_macro2::Span::call_site());
-        if let Some(attr) = enum_.attrs.iter().find(|attr| attr.path.is_ident("repr")) {
+        if let Some(attr) = enum_.attrs.iter().find(|attr| attr.path().is_ident("repr")) {
             let args =
                 attr.parse_args_with(Punctuated::<TokenStream, Token![!]>::parse_terminated)?;
             if let Some(ident) = args
@@ -468,7 +466,7 @@ pub fn build_py_enum(
     } else if let Some(subclass) = &args.options.subclass {
         bail_spanned!(subclass.span() => "enums can't be inherited by other classes");
     } else if enum_.variants.is_empty() {
-        bail_spanned!(enum_.brace_token.span => "#[pyclass] can't be used on enums without any variants");
+        bail_spanned!(enum_.brace_token.span.join() => "#[pyclass] can't be used on enums without any variants");
     }
 
     let doc = utils::get_doc(&enum_.attrs, None);
@@ -567,7 +565,7 @@ fn impl_enum(
             );
             quote! { #cls::#variant_name => #repr, }
         });
-        let mut repr_impl: syn::ImplItemMethod = syn::parse_quote! {
+        let mut repr_impl: syn::ImplItemFn = syn::parse_quote! {
             fn __pyo3__repr__(&self) -> &'static str {
                 match self {
                     #(#variants_repr)*
@@ -586,7 +584,7 @@ fn impl_enum(
             let variant_name = variant.ident;
             quote! { #cls::#variant_name => #cls::#variant_name as #repr_type, }
         });
-        let mut int_impl: syn::ImplItemMethod = syn::parse_quote! {
+        let mut int_impl: syn::ImplItemFn = syn::parse_quote! {
             fn __pyo3__int__(&self) -> #repr_type {
                 match self {
                     #(#variants_to_int)*
@@ -598,7 +596,7 @@ fn impl_enum(
     };
 
     let (default_richcmp, default_richcmp_slot) = {
-        let mut richcmp_impl: syn::ImplItemMethod = syn::parse_quote! {
+        let mut richcmp_impl: syn::ImplItemFn = syn::parse_quote! {
             fn __pyo3__richcmp__(
                 &self,
                 py: _pyo3::Python,
@@ -673,7 +671,7 @@ fn impl_enum(
 
 fn generate_default_protocol_slot(
     cls: &syn::Type,
-    method: &mut syn::ImplItemMethod,
+    method: &mut syn::ImplItemFn,
     slot: &SlotDef,
 ) -> syn::Result<MethodAndSlotDef> {
     let spec = FnSpec::parse(

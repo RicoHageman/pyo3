@@ -1,7 +1,3 @@
-// Copyright (c) 2017-present PyO3 Project and Contributors
-//
-// based on Daniel Grunwald's https://github.com/dgrunwald/rust-cpython
-
 use crate::callback::IntoPyCallbackOutput;
 use crate::err::{PyErr, PyResult};
 use crate::exceptions;
@@ -22,7 +18,7 @@ use std::str;
 #[repr(transparent)]
 pub struct PyModule(PyAny);
 
-pyobject_native_type_core!(PyModule, ffi::PyModule_Type, #checkfunction=ffi::PyModule_Check);
+pyobject_native_type_core!(PyModule, pyobject_native_static_type_object!(ffi::PyModule_Type), #checkfunction=ffi::PyModule_Check);
 
 impl PyModule {
     /// Creates a new module object with the `__name__` attribute set to `name`.
@@ -102,7 +98,7 @@ impl PyModule {
     /// let code = include_str!("../../assets/script.py");
     ///
     /// Python::with_gil(|py| -> PyResult<()> {
-    ///     PyModule::from_code(py, code, "example", "example")?;
+    ///     PyModule::from_code(py, code, "example.py", "example")?;
     ///     Ok(())
     /// })?;
     /// # Ok(())
@@ -121,7 +117,7 @@ impl PyModule {
     /// let code = std::fs::read_to_string("assets/script.py")?;
     ///
     /// Python::with_gil(|py| -> PyResult<()> {
-    ///     PyModule::from_code(py, &code, "example", "example")?;
+    ///     PyModule::from_code(py, &code, "example.py", "example")?;
     ///     Ok(())
     /// })?;
     /// Ok(())

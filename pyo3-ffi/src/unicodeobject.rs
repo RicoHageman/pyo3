@@ -2,6 +2,8 @@ use crate::object::*;
 use crate::pyport::Py_ssize_t;
 use libc::wchar_t;
 use std::os::raw::{c_char, c_int, c_void};
+#[cfg(not(PyPy))]
+use std::ptr::addr_of_mut;
 
 #[cfg(not(Py_LIMITED_API))]
 pub type Py_UNICODE = wchar_t;
@@ -34,7 +36,7 @@ pub unsafe fn PyUnicode_Check(op: *mut PyObject) -> c_int {
 #[inline]
 #[cfg(not(PyPy))]
 pub unsafe fn PyUnicode_CheckExact(op: *mut PyObject) -> c_int {
-    (Py_TYPE(op) == addr_of_mut_shim!(PyUnicode_Type)) as c_int
+    (Py_TYPE(op) == addr_of_mut!(PyUnicode_Type)) as c_int
 }
 
 pub const Py_UNICODE_REPLACEMENT_CHARACTER: Py_UCS4 = 0xFFFD;
@@ -59,6 +61,8 @@ extern "C" {
     pub fn PyUnicode_AsUCS4Copy(unicode: *mut PyObject) -> *mut Py_UCS4;
     #[cfg_attr(PyPy, link_name = "PyPyUnicode_GetLength")]
     pub fn PyUnicode_GetLength(unicode: *mut PyObject) -> Py_ssize_t;
+    #[cfg(not(Py_3_12))]
+    #[deprecated(note = "Removed in Python 3.12")]
     #[cfg_attr(PyPy, link_name = "PyPyUnicode_GetSize")]
     pub fn PyUnicode_GetSize(unicode: *mut PyObject) -> Py_ssize_t;
     pub fn PyUnicode_ReadChar(unicode: *mut PyObject, index: Py_ssize_t) -> Py_UCS4;

@@ -1,4 +1,3 @@
-// Copyright (c) 2017-present PyO3 Project and Contributors
 use crate::conversion::PyTryFrom;
 use crate::err::{self, PyDowncastError, PyErr, PyResult};
 use crate::gil;
@@ -1106,15 +1105,6 @@ impl PyObject {
         T: PyTryFrom<'p>,
     {
         <T as PyTryFrom<'_>>::try_from_unchecked(self.as_ref(py))
-    }
-
-    /// Casts the PyObject to a concrete Python object type.
-    #[deprecated(since = "0.18.0", note = "use downcast() instead")]
-    pub fn cast_as<'p, D>(&'p self, py: Python<'p>) -> Result<&'p D, PyDowncastError<'_>>
-    where
-        D: PyTryFrom<'p>,
-    {
-        self.downcast(py)
     }
 }
 

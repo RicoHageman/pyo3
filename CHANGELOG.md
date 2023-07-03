@@ -10,6 +10,73 @@ To see unreleased changes, please see the [CHANGELOG on the main branch guide](h
 
 <!-- towncrier release notes start -->
 
+## [0.19.1] - 2023-07-03
+
+### Packaging
+
+- Extend range of supported versions of `hashbrown` optional dependency to include version 0.14 [#3258](https://github.com/PyO3/pyo3/pull/3258)
+- Extend range of supported versions of `indexmap` optional dependency to include version 2. [#3277](https://github.com/PyO3/pyo3/pull/3277)
+- Support PyPy 3.10. [#3289](https://github.com/PyO3/pyo3/pull/3289)
+
+### Added
+
+- Add `pyo3::types::PyFrozenSetBuilder` to allow building a `PyFrozenSet` item by item. [#3156](https://github.com/PyO3/pyo3/pull/3156)
+- Add support for converting to and from Python's `ipaddress.IPv4Address`/`ipaddress.IPv6Address` and `std::net::IpAddr`. [#3197](https://github.com/PyO3/pyo3/pull/3197)
+- Add support for `num-bigint` feature in combination with `abi3`. [#3198](https://github.com/PyO3/pyo3/pull/3198)
+- Add `PyErr_GetRaisedException()`, `PyErr_SetRaisedException()` to FFI definitions for Python 3.12 and later. [#3248](https://github.com/PyO3/pyo3/pull/3248)
+- Add `Python::with_pool` which is a safer but more limited alternative to `Python::new_pool`. [#3263](https://github.com/PyO3/pyo3/pull/3263)
+- Add `PyDict::get_item_with_error` on PyPy. [#3270](https://github.com/PyO3/pyo3/pull/3270)
+- Allow `#[new]` methods may to return `Py<Self>` in order to return existing instances. [#3287](https://github.com/PyO3/pyo3/pull/3287)
+
+### Fixed
+
+- Fix conversion of classes implementing `__complex__` to `Complex` when using `abi3` or PyPy. [#3185](https://github.com/PyO3/pyo3/pull/3185)
+- Stop suppressing unrelated exceptions in `PyAny::hasattr`. [#3271](https://github.com/PyO3/pyo3/pull/3271)
+- Fix memory leak when creating `PySet` or `PyFrozenSet` or returning types converted into these internally, e.g. `HashSet` or `BTreeSet`. [#3286](https://github.com/PyO3/pyo3/pull/3286)
+
+
+## [0.19.0] - 2023-05-31
+
+### Packaging
+
+- Correct dependency on syn to version 1.0.85 instead of the incorrect version 1.0.56. [#3152](https://github.com/PyO3/pyo3/pull/3152)
+
+### Added
+
+- Accept `text_signature` option (and automatically generate signature) for `#[new]` in `#[pymethods]`. [#2980](https://github.com/PyO3/pyo3/pull/2980)
+- Add support for converting to and from Python's `decimal.Decimal` and `rust_decimal::Decimal`. [#3016](https://github.com/PyO3/pyo3/pull/3016)
+- Add `#[pyo3(from_item_all)]` when deriving `FromPyObject` to specify `get_item` as getter for all fields. [#3120](https://github.com/PyO3/pyo3/pull/3120)
+- Add `pyo3::exceptions::PyBaseExceptionGroup` for Python 3.11, and corresponding FFI definition `PyExc_BaseExceptionGroup`. [#3141](https://github.com/PyO3/pyo3/pull/3141)
+- Accept `#[new]` with `#[classmethod]` to create a constructor which receives a (subtype's) class/`PyType` as its first argument. [#3157](https://github.com/PyO3/pyo3/pull/3157)
+- Add `PyClass::get` and `Py::get` for GIL-indepedent access to classes with `#[pyclass(frozen)]`. [#3158](https://github.com/PyO3/pyo3/pull/3158)
+- Add `PyAny::is_exact_instance` and `PyAny::is_exact_instance_of`. [#3161](https://github.com/PyO3/pyo3/pull/3161)
+
+### Changed
+
+- `PyAny::is_instance_of::<T>(obj)` is now equivalent to `T::is_type_of(obj)`, and now returns `bool` instead of `PyResult<bool>`. [#2881](https://github.com/PyO3/pyo3/pull/2881)
+- Deprecate `text_signature` option on `#[pyclass]` structs. [#2980](https://github.com/PyO3/pyo3/pull/2980)
+- No longer wrap `anyhow::Error`/`eyre::Report` containing a basic `PyErr` without a chain in a `PyRuntimeError`. [#3004](https://github.com/PyO3/pyo3/pull/3004)
+- - Change `#[getter]` and `#[setter]` to use a common call "trampoline" to slightly reduce generated code size and compile times. [#3029](https://github.com/PyO3/pyo3/pull/3029)
+- Improve default values for str, numbers and bool in automatically-generated `text_signature`. [#3050](https://github.com/PyO3/pyo3/pull/3050)
+- Improve default value for `None` in automatically-generated `text_signature`. [#3066](https://github.com/PyO3/pyo3/pull/3066)
+- Rename `PySequence::list` and `PySequence::tuple` to `PySequence::to_list` and `PySequence::to_tuple`. (The old names continue to exist as deprecated forms.) [#3111](https://github.com/PyO3/pyo3/pull/3111)
+- Extend the lifetime of the GIL token returned by `PyRef::py` and `PyRefMut::py` to match the underlying borrow. [#3131](https://github.com/PyO3/pyo3/pull/3131)
+- Safe access to the GIL, for example via `Python::with_gil`, is now locked inside of implementations of the `__traverse__` slot. [#3168](https://github.com/PyO3/pyo3/pull/3168)
+
+### Removed
+
+- Remove all functionality deprecated in PyO3 0.17, most prominently `Python::acquire_gil` is replaced by `Python::with_gil`. [#2981](https://github.com/PyO3/pyo3/pull/2981)
+
+### Fixed
+
+- Correct FFI definitions `PyGetSetDef`, `PyMemberDef`, `PyStructSequence_Field` and `PyStructSequence_Desc` to have `*const c_char` members for `name` and `doc` (not `*mut c_char`). [#3036](https://github.com/PyO3/pyo3/pull/3036)
+- Fix panic on `fmt::Display`, instead return `"<unprintable object>"` string and report error via `sys.unraisablehook()` [#3062](https://github.com/PyO3/pyo3/pull/3062)
+- Fix a compile error of "temporary value dropped while borrowed" when `#[pyfunction]`s take references into `#[pyclass]`es [#3142](https://github.com/PyO3/pyo3/pull/3142)
+- Fix crashes caused by PyO3 applying deferred reference count updates when entering a `__traverse__` implementation. [#3168](https://github.com/PyO3/pyo3/pull/3168)
+- Forbid running the `Drop` implementations of unsendable classes on other threads. [#3176](https://github.com/PyO3/pyo3/pull/3176)
+- Fix a compile error when `#[pymethods]` items come from somewhere else (for example, as a macro argument) and a custom receiver like `Py<Self>` is used. [#3178](https://github.com/PyO3/pyo3/pull/3178)
+
+
 ## [0.18.3] - 2023-04-13
 
 ### Added
@@ -1436,7 +1503,9 @@ Yanked
 
 - Initial release
 
-[Unreleased]: https://github.com/pyo3/pyo3/compare/v0.18.3...HEAD
+[Unreleased]: https://github.com/pyo3/pyo3/compare/v0.19.1...HEAD
+[0.19.1]: https://github.com/pyo3/pyo3/compare/v0.19.0...v0.19.1
+[0.19.0]: https://github.com/pyo3/pyo3/compare/v0.18.3...v0.19.0
 [0.18.3]: https://github.com/pyo3/pyo3/compare/v0.18.2...v0.18.3
 [0.18.2]: https://github.com/pyo3/pyo3/compare/v0.18.1...v0.18.2
 [0.18.1]: https://github.com/pyo3/pyo3/compare/v0.18.0...v0.18.1

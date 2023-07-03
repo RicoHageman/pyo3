@@ -1,5 +1,3 @@
-// Copyright (c) 2017-present PyO3 Project and Contributors
-
 use crate::err::{error_on_minusone, PyResult};
 use crate::ffi;
 use crate::types::PyString;
@@ -11,7 +9,7 @@ pub struct PyTraceback(PyAny);
 
 pyobject_native_type_core!(
     PyTraceback,
-    ffi::PyTraceBack_Type,
+    pyobject_native_static_type_object!(ffi::PyTraceBack_Type),
     #checkfunction=ffi::PyTraceBack_Check
 );
 

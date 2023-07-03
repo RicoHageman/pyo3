@@ -1,5 +1,3 @@
-// Copyright (c) 2017-present PyO3 Project and Contributors
-
 use std::convert::TryInto;
 
 use crate::ffi::{self, Py_ssize_t};
@@ -55,7 +53,7 @@ fn new_from_iter(
 #[repr(transparent)]
 pub struct PyTuple(PyAny);
 
-pyobject_native_type_core!(PyTuple, ffi::PyTuple_Type, #checkfunction=ffi::PyTuple_Check);
+pyobject_native_type_core!(PyTuple, pyobject_native_static_type_object!(ffi::PyTuple_Type), #checkfunction=ffi::PyTuple_Check);
 
 impl PyTuple {
     /// Constructs a new tuple with the given elements.
@@ -461,7 +459,7 @@ mod tests {
     #[test]
     fn test_new() {
         Python::with_gil(|py| {
-            let ob = PyTuple::new(py, &[1, 2, 3]);
+            let ob = PyTuple::new(py, [1, 2, 3]);
             assert_eq!(3, ob.len());
             let ob: &PyAny = ob.into();
             assert_eq!((1, 2, 3), ob.extract().unwrap());
@@ -469,7 +467,7 @@ mod tests {
             let mut map = HashSet::new();
             map.insert(1);
             map.insert(2);
-            PyTuple::new(py, &map);
+            PyTuple::new(py, map);
         });
     }
 
@@ -487,7 +485,7 @@ mod tests {
     #[test]
     fn test_slice() {
         Python::with_gil(|py| {
-            let tup = PyTuple::new(py, &[2, 3, 5, 7]);
+            let tup = PyTuple::new(py, [2, 3, 5, 7]);
             let slice = tup.get_slice(1, 3);
             assert_eq!(2, slice.len());
             let slice = tup.get_slice(1, 7);

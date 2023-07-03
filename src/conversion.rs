@@ -1,5 +1,3 @@
-// Copyright (c) 2017-present PyO3 Project and Contributors
-
 //! Defines conversions between Rust and Python types.
 use crate::err::{self, PyDowncastError, PyResult};
 #[cfg(feature = "experimental-inspect")]
@@ -214,7 +212,7 @@ pub trait ToPyObject {
 /// # }
 /// ```
 /// Python code will see this as any of the `int`, `string` or `None` objects.
-#[cfg_attr(docsrs, doc(alias = "IntoPyCallbackOutput"))]
+#[doc(alias = "IntoPyCallbackOutput")]
 pub trait IntoPy<T>: Sized {
     /// Performs the conversion.
     fn into_py(self, py: Python<'_>) -> T;
@@ -669,7 +667,7 @@ mod tests {
     #[test]
     fn test_try_from_unchecked() {
         Python::with_gil(|py| {
-            let list = PyList::new(py, &[1, 2, 3]);
+            let list = PyList::new(py, [1, 2, 3]);
             let val = unsafe { <PyList as PyTryFrom>::try_from_unchecked(list.as_ref()) };
             assert!(list.is(val));
         });

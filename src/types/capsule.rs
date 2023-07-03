@@ -1,4 +1,3 @@
-// Copyright (c) 2017-present PyO3 Project and Contributors
 use crate::Python;
 use crate::{ffi, AsPyPointer, PyAny};
 use crate::{pyobject_native_type_core, PyErr, PyResult};
@@ -42,7 +41,7 @@ use std::os::raw::{c_char, c_int, c_void};
 #[repr(transparent)]
 pub struct PyCapsule(PyAny);
 
-pyobject_native_type_core!(PyCapsule, ffi::PyCapsule_Type, #checkfunction=ffi::PyCapsule_CheckExact);
+pyobject_native_type_core!(PyCapsule, pyobject_native_static_type_object!(ffi::PyCapsule_Type), #checkfunction=ffi::PyCapsule_CheckExact);
 
 impl PyCapsule {
     /// Constructs a new capsule whose contents are `value`, associated with `name`.
